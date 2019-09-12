@@ -1,39 +1,46 @@
 <template>
-	<form>
-    <p>
-      <label for="url">Url:</label>
-		  <input type="url" name="url" id="url" v-model="link.url" size="50"/>
-		</p>
-    <p>
-      <label for="notes">Notes:</label>
-		  <textarea rows="4" cols="50" size="50" id="notes" name="notes" v-model="link.notes" />
-		</p>
-		{{ link }}
-    <div id="preview" v-if="link.url">
-      <link-prevue :url="link.url">
-        <template slot-scope="props">
-          <div class="card">
-            <img class="card-img-top" v-if="showImage" :src="props.img" :alt="props.title">
-            <div class="card-block">
-              <h4 class="card-title" v-if="showTitle" v-text="removeDiacritics(props.title)"></h4>
-              <p class="card-text" v-if="showDescription" v-text="removeDiacritics(props.description)"></p>
+  <div id="container">
+  	<form>
+      <div id="formInputs">
+        <p>
+          <label for="url">Url:</label>
+    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="50"/>
+    		</p>
+        <p>
+          <label for="notes">Notes: &nbsp </label>
+    		  <textarea rows="4" cols="48" size="48" id="notes" name="notes" v-model="link.notes" />
+    		</p>
+    		{{ link }} / isValid: {{ isUrlValid }}
+      </div>
+      <div id="preview" v-if="link.url">
+        <link-prevue :url="link.url">
+          <template slot-scope="props">
+            <div class="card">
+              <img class="card-img-top" v-if="showImage" :src="props.img" :alt="props.title">
+              <div class="card-block">
+                <h4 class="card-title" v-if="showTitle" v-text="removeDiacritics(props.title)"></h4>
+                <p class="card-text" v-if="showDescription" v-text="removeDiacritics(props.description)"></p>
+              </div>
             </div>
-          </div>
-        </template>
-      </link-prevue>
-    </div>
-    <div v-if="link.url" class="card">
-      <label for="showTitle">Title</label>
-      <input type="checkbox" name="showTitle" id="showTitle" v-model="showTitle">
-      <label for="showDescription">Description</label>
-      <input type="checkbox" name="showDescription" id="showDescription" v-model="showDescription">
-      <label for="showImage">Image</label>
-      <input type="checkbox" name="showImage" id="showImage" v-model="showImage">
-    </div>
-    <p>
-      <button @click.prevent="testme">Send</button>
-    </p>
-	</form>
+          </template>
+        </link-prevue>
+      </div>
+      <div v-if="isUrlValid" class="card options">
+        <label for="showTitle">Title</label>
+        <input type="checkbox" name="showTitle" id="showTitle" v-model="showTitle">
+        <label for="showDescription">Description</label>
+        <input type="checkbox" name="showDescription" id="showDescription" v-model="showDescription">
+        <label for="showImage">Image</label>
+        <input type="checkbox" name="showImage" id="showImage" v-model="showImage">
+        <p>
+          <button @click.prevent="testme">Send</button>
+        </p>
+      </div>
+      <div v-else>
+        "Not a valid url"
+      </div>
+  	</form>
+  </div>
 </template>
 
 <script>
@@ -52,13 +59,14 @@ export default {
       },
       showDescription: true,
       showTitle: true,
-      showImage: true
+      showImage: true,
+      isUrlValid: true
     }
   },
   methods: {
     testme() {
       Object.assign(this.link, this.$children[0].response)
-      console.log(this.link)
+      console.log(2, this.link)
     },
     removeDiacritics(str){
       let map = {
@@ -71,7 +79,6 @@ export default {
       for (var pattern in map) {
           str = str.replace(new RegExp(map[pattern], 'g'), pattern);
       }
-      console.log(str)
       return str
     }
   }
@@ -79,40 +86,52 @@ export default {
 </script>
 
 <style scoped>
-form {
-  width: 350px;
-  margin: 0 auto;
-}
-#preview {
+#container {
+  padding: 1em;
+  width: 60vw;
+  min-width: 400px;
   display: flex;
-  align-items: center;
+  margin: 0 auto;
   justify-content: center;
-  margin-bottom: 1em;
+  border: 1px dashed grey;
+}
+
+#formInputs, #preview {
+ flex: 1 0 400px;
+ flex-direction: column;
+ display: flex;
+ padding: 1em;
+}
+
+#formInputs p {
+  display: flex;
+  justify-content: space-between;
 }
 
 .card {
-  padding: 1em;
-  flex: 1 0 350px;
-  border: 1px solid #434343;
-  background: #ECE9E6;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to bottom, #FFFFFF, #ECE9E6);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to bottom, #FFFFFF, #ECE9E6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px dashed #232323;
 }
 
 .card-img-top, .card-block{
-  width: 300px;
+  max-width: 300px;
   height: auto;
 }
 
-label {
-  display: inline-block;
-  width: 100px;
-  text-align: left;
+.options {
+  flex-direction: row;
+  justify-content: space-around;
+  background: none;
+  border: none;
 }
 
-input, textarea {
-  width: 200px;
-  vertical-align: top;
+button {
+  padding: 1em;
+  border-radius: 1em;
+  background-color: #333;
+  color: white;
 }
+
 </style>
