@@ -4,7 +4,7 @@
       <div id="formInputs">
         <p>
           <label for="url">Url:</label>
-    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="50"/>
+    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="50" @paste="checkValid()" contenteditable="true"/>
     		</p>
         <p>
           <label for="notes">Notes: &nbsp </label>
@@ -16,10 +16,10 @@
         <link-prevue :url="link.url">
           <template slot-scope="props">
             <div class="card">
-              <img class="card-img-top" v-if="showImage" :src="props.img" :alt="props.title">
+              <img class="card-img-top" v-if="show.image" :src="props.img" :alt="props.title">
               <div class="card-block">
-                <h4 class="card-title" v-if="showTitle" v-text="removeDiacritics(props.title)"></h4>
-                <p class="card-text" v-if="showDescription" v-text="removeDiacritics(props.description)"></p>
+                <h4 class="card-title" v-if="show.title" v-text="removeDiacritics(props.title)"></h4>
+                <p class="card-text" v-if="show.description" v-text="removeDiacritics(props.description)"></p>
               </div>
             </div>
           </template>
@@ -27,18 +27,18 @@
       </div>
       <div v-if="isUrlValid" class="card options">
         <label for="showTitle">Title</label>
-        <input type="checkbox" name="showTitle" id="showTitle" v-model="showTitle">
+        <input type="checkbox" name="showTitle" id="showTitle" v-model="show.title" @change="filter('title')">
         <label for="showDescription">Description</label>
-        <input type="checkbox" name="showDescription" id="showDescription" v-model="showDescription">
+        <input type="checkbox" name="showDescription" id="showDescription" v-model="show.description" @change="filter('description')">
         <label for="showImage">Image</label>
-        <input type="checkbox" name="showImage" id="showImage" v-model="showImage">
+        <input type="checkbox" name="showImage" id="showImage" v-model="show.image" @change="filter('image')">
         <p>
-          <button @click.prevent="testme">Send</button>
+          <button type="submit" @click.prevent="testme()">Send</button>
         </p>
       </div>
-      <div v-else>
+<!--       <div v-else>
         "Not a valid url"
-      </div>
+      </div> -->
   	</form>
   </div>
 </template>
@@ -57,16 +57,25 @@ export default {
       	notes: '',
       	tags: ''
       },
-      showDescription: true,
-      showTitle: true,
-      showImage: true,
-      isUrlValid: true
+      show: {
+        description: true,
+        title: true,
+        image: true
+      },
+      isUrlValid: false
     }
   },
   methods: {
+    filter(ev) {
+      this.show[ev] === true ? this.link[ev] = 'yup' : delete this.link[ev]
+      console.log(this.link)
+    },
+    async checkValid() {
+      let response = await this.$children[0].validUrl
+      console.log(response)
+    },
     testme() {
-      Object.assign(this.link, this.$children[0].response)
-      console.log(2, this.link)
+      // Object.assign(this.link, this.$children[0].response)
     },
     removeDiacritics(str){
       let map = {
