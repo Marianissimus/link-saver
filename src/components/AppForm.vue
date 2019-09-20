@@ -4,19 +4,18 @@
       <div id="formInputs">
         <p>
           <label for="url">Url:</label>
-    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="50" @paste="checkValid()" contenteditable="true"/>
+    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="50" contenteditable="true"/>
     		</p>
         <p>
           <label for="notes">Notes: &nbsp </label>
-    		  <textarea rows="4" cols="48" size="48" id="notes" name="notes" v-model="link.notes" />
+    		  <textarea rows="4" cols="48" size="48" id="notes" name="notes" v-model="userInput.notes" />
     		</p>
-    		{{ link }} / isValid: {{ isUrlValid }}
       </div>
       <div id="preview" v-if="link.url">
-        <link-prevue :url="link.url">
+        <link-prevue :url="link.url" ref="prevue" @hook:beforeUpdate="update">
           <template slot-scope="props">
             <div class="card">
-              <img class="card-img-top" v-if="show.image" :src="props.img" :alt="props.title">
+              <img class="card-img-top" v-if="show.images" :src="props.img" :alt="props.title">
               <div class="card-block">
                 <h4 class="card-title" v-if="show.title" v-text="removeDiacritics(props.title)"></h4>
                 <p class="card-text" v-if="show.description" v-text="removeDiacritics(props.description)"></p>
@@ -25,15 +24,16 @@
           </template>
         </link-prevue>
       </div>
-      <div v-if="isUrlValid" class="card options">
+      <div v-if="isValidUrl" class="card options">
         <label for="showTitle">Title</label>
         <input type="checkbox" name="showTitle" id="showTitle" v-model="show.title" @change="filter('title')">
         <label for="showDescription">Description</label>
         <input type="checkbox" name="showDescription" id="showDescription" v-model="show.description" @change="filter('description')">
         <label for="showImage">Image</label>
-        <input type="checkbox" name="showImage" id="showImage" v-model="show.image" @change="filter('image')">
+        <input type="checkbox" name="showImage" id="showImage" v-model="show.images" @change="filter('images')">
+        <div>{{ link }}</div>
         <p>
-          <button type="submit" @click.prevent="testme()">Send</button>
+          <button type="submit" @click.prevent="send">Send</button>
         </p>
       </div>
 <!--       <div v-else>
@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import LinkPrevue from 'link-prevue'
 
 export default {
@@ -54,30 +55,40 @@ export default {
     return {
       link: {
       	url: '',
-      	notes: '',
-      	tags: ''
+        title: '',
+        description: '',
+        images: '',
+      },
+      userInput: {
+        notes: '',
+        tags: '',
       },
       show: {
         description: true,
         title: true,
-        image: true
+        images: true
       },
-      isUrlValid: false
+      isValidUrl: false,
+      response: null // use to restore values in send btn options
     }
   },
   methods: {
-    filter(ev) {
-      this.show[ev] === true ? this.link[ev] = 'yup' : delete this.link[ev]
-      console.log(this.link)
+    update () {
+      this.isValidUrl = this.$refs.prevue.validUrl
+      this.response = this.$refs.prevue.response
+      delete this.response.url
+      for (let el in this.response){
+        this.link[el] = this.response[el]
+      }
     },
-    async checkValid() {
-      let response = await this.$children[0].validUrl
-      console.log(response)
+    filter (ev) {
+      this.link = {title: ev}
+      // this.link[ev] = this.response[ev] : this.link[ev] = 'fuck you'
     },
-    testme() {
-      // Object.assign(this.link, this.$children[0].response)
+    send () {
+      console.log(2, this.link)
     },
-    removeDiacritics(str){
+    removeDiacritics (str) {
       let map = {
         'a': 'ă|â|ă',
         'i': 'î',
