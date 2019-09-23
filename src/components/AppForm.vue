@@ -4,7 +4,7 @@
       <div id="formInputs">
         <p>
           <label for="url">Url: &nbsp</label>
-    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="26" contenteditable="true"/>
+    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="26" contenteditable="true" :disabled="isValidUrl"/>
           <label for="tag">Tag: &nbsp</label>
           <select name="tag" id="tag" v-model="userInput.tag">
             <option v-for="option in tags" v-bind:value="option">
