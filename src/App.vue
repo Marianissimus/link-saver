@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <span>Vue.js PWA</span>
+      <span>Vue Link Saver</span>
     </header>
     <main>
 <!--       <img src="./assets/logo.png" alt="Vue.js PWA">
@@ -26,6 +26,7 @@ export default {
 <style>
 body {
   margin: 0;
+  background-color: #2c3e50;
 }
 
 #app {

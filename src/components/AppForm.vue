@@ -3,16 +3,22 @@
   	<form>
       <div id="formInputs">
         <p>
-          <label for="url">Url:</label>
-    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="50" contenteditable="true"/>
-    		</p>
+          <label for="url">Url: &nbsp</label>
+    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="26" contenteditable="true"/>
+          <label for="tag">Tag: &nbsp</label>
+          <select name="tag" id="tag" v-model="userInput.tag">
+            <option v-for="option in tags" v-bind:value="option">
+              {{ option }}
+            </option>
+          </select>
+        </p>
         <p>
           <label for="notes">Notes: &nbsp </label>
     		  <textarea rows="4" cols="48" size="48" id="notes" name="notes" v-model="userInput.notes" />
     		</p>
       </div>
       <div id="preview" v-if="link.url">
-        <link-prevue :url="link.url" ref="prevue" @hook:beforeUpdate="update">
+        <link-prevue :url="link.url" ref="prevue" @hook:updated="update">
           <template slot-scope="props">
             <div class="card">
               <img class="card-img-top" v-if="show.images" :src="props.img" :alt="props.title">
@@ -24,17 +30,16 @@
           </template>
         </link-prevue>
       </div>
-      <div v-if="isValidUrl" class="card options">
+      <div id="options" v-if="isValidUrl" class="card options">
         <label for="showTitle">Title</label>
-        <input type="checkbox" name="showTitle" id="showTitle" v-model="show.title" @change="filter('title')">
+        <input type="checkbox" name="showTitle" id="showTitle" v-model="show.title">
         <label for="showDescription">Description</label>
-        <input type="checkbox" name="showDescription" id="showDescription" v-model="show.description" @change="filter('description')">
+        <input type="checkbox" name="showDescription" id="showDescription" v-model="show.description">
         <label for="showImage">Image</label>
-        <input type="checkbox" name="showImage" id="showImage" v-model="show.images" @change="filter('images')">
-        <div>{{ link }}</div>
-        <p>
-          <button type="submit" @click.prevent="send">Send</button>
-        </p>
+        <input type="checkbox" name="showImage" id="showImage" v-model="show.images">
+      </div>
+      <div v-if="isValidUrl" class="btnRow">
+        <button type="submit" @click.prevent="send">Send</button>
       </div>
 <!--       <div v-else>
         "Not a valid url"
@@ -61,13 +66,14 @@ export default {
       },
       userInput: {
         notes: '',
-        tags: '',
+        tag: '',
       },
       show: {
         description: true,
         title: true,
         images: true
       },
+      tags: ['music', 'vue js', 'javascript'],
       isValidUrl: false,
       response: null // use to restore values in send btn options
     }
@@ -78,15 +84,28 @@ export default {
       this.response = this.$refs.prevue.response
       delete this.response.url
       for (let el in this.response){
-        this.link[el] = this.response[el]
+        Vue.set(this.link, el, this.response[el])
       }
     },
-    filter (ev) {
-      this.link = {title: ev}
-      // this.link[ev] = this.response[ev] : this.link[ev] = 'fuck you'
-    },
     send () {
-      console.log(2, this.link)
+      let toSend = {}
+      // send only values that are shown
+      for (let el in this.link){
+        if (this.show[el] === true) {
+          toSend[el] = this.link[el]
+        }
+      }
+      // send userInput values, if any
+      for (let el in this.userInput) {
+        if (this.userInput[el]) {
+          toSend[el] = this.userInput[el]
+        }
+      }
+      // also add the url
+      toSend.url = this.link.url
+      console.log(toSend)
+      // reset data
+      Object.assign(this.$data, this.$options.data.apply(this))
     },
     removeDiacritics (str) {
       let map = {
@@ -108,12 +127,14 @@ export default {
 <style scoped>
 #container {
   padding: 1em;
-  width: 60vw;
+  width: 90vw;
   min-width: 400px;
+  max-width: 600px;
   display: flex;
   margin: 0 auto;
   justify-content: center;
-  border: 1px dashed grey;
+  background-color: white;
+  border-radius: 10px;
 }
 
 #formInputs, #preview {
@@ -121,6 +142,7 @@ export default {
  flex-direction: column;
  display: flex;
  padding: 1em;
+ overflow: hidden;
 }
 
 #formInputs p {
@@ -133,6 +155,7 @@ export default {
   flex-direction: column;
   align-items: center;
   border: 1px dashed #232323;
+  padding: 1em;
 }
 
 .card-img-top, .card-block{
