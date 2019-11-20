@@ -1,19 +1,19 @@
 <template>
   <div id="container">
-  	<form>
+  	<form @submit.prevent>
       <div id="formInputs">
         <p>
-          <label for="url">Url: &nbsp</label>
+          <label for="url">Url: &nbsp;</label>
     		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="26" contenteditable="true" :disabled="isValidUrl"/>
-          <label for="tag">Tag: &nbsp</label>
+          <label for="tag">Tag: &nbsp;</label>
           <select name="tag" id="tag" v-model="userInput.tag">
-            <option v-for="option in tags" v-bind:value="option">
+            <option v-for="option in tags" v-bind:value="option" :key="option">
               {{ option }}
             </option>
           </select>
         </p>
         <p>
-          <label for="notes">Notes: &nbsp </label>
+          <label for="notes">Notes: &nbsp;</label>
     		  <textarea rows="4" cols="48" size="48" id="notes" name="notes" v-model="userInput.notes" />
     		</p>
       </div>
@@ -39,11 +39,12 @@
         <input type="checkbox" name="showImage" id="showImage" v-model="show.images">
       </div>
       <div v-if="isValidUrl" class="btnRow">
+        <button @click.prevent="reset">Reset</button>
         <button type="submit" @click.prevent="send">Send</button>
       </div>
-<!--       <div v-else>
+      <div v-if="requestWasMade && !isValidUrl">
         "Not a valid url"
-      </div> -->
+      </div>
   	</form>
   </div>
 </template>
@@ -58,16 +59,9 @@ export default {
   },
   data () {
     return {
-      link: {
-      	url: '',
-        title: '',
-        description: '',
-        images: '',
-      },
-      userInput: {
-        notes: '',
-        tag: '',
-      },
+      link: this.getEmptyLink(),
+      userInput: this.getEmptyInput(),
+      requestWasMade: false,
       show: {
         description: true,
         title: true,
@@ -79,9 +73,24 @@ export default {
     }
   },
   methods: {
+    getEmptyLink () {
+      return { 
+        url: '',
+        title: '',
+        description: '',
+        images: '',
+      }
+    },
+    getEmptyInput () {
+      return {
+        notes: '',
+        tag: '',
+      }
+    },
     update () {
       this.isValidUrl = this.$refs.prevue.validUrl
       this.response = this.$refs.prevue.response
+      this.requestWasMade = true
       delete this.response.url
       for (let el in this.response){
         Vue.set(this.link, el, this.response[el])
@@ -106,6 +115,11 @@ export default {
       console.log(toSend)
       // reset data
       Object.assign(this.$data, this.$options.data.apply(this))
+    },
+    reset () {
+      this.link = this.getEmptyLink()
+      this.userInput = this.getEmptyInput()
+      this.isValidUrl = false
     },
     removeDiacritics (str) {
       let map = {
@@ -175,6 +189,7 @@ button {
   border-radius: 1em;
   background-color: #333;
   color: white;
+  cursor: pointer
 }
 
 </style>
