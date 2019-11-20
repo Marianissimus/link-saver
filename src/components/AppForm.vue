@@ -4,9 +4,12 @@
       <div id="formInputs">
         <p>
           <label for="url">Url: &nbsp;</label>
-    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="26" contenteditable="true" :disabled="isValidUrl"/>
+    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="26" contenteditable="true" :disabled="isValidUrl"
+          placeholder="Paste your link here"
+          />
           <label for="tag">Tag: &nbsp;</label>
           <select name="tag" id="tag" v-model="userInput.tag">
+            <option value="" selected disabled>Choose</option>
             <option v-for="option in tags" v-bind:value="option" :key="option">
               {{ option }}
             </option>
@@ -14,7 +17,7 @@
         </p>
         <p>
           <label for="notes">Notes: &nbsp;</label>
-    		  <textarea rows="4" cols="48" size="48" id="notes" name="notes" v-model="userInput.notes" />
+    		  <textarea rows="4" cols="48" size="48" id="notes" name="notes" v-model="userInput.notes" placeholder="Write some notes" />
     		</p>
       </div>
       <div id="preview" v-if="link.url">
@@ -39,8 +42,8 @@
         <input type="checkbox" name="showImage" id="showImage" v-model="show.images">
       </div>
       <div v-if="isValidUrl" class="btnRow">
-        <button @click.prevent="reset">Reset</button>
-        <button type="submit" @click.prevent="send">Send</button>
+        <button @click.prevent="reset" class="resetBtn">Reset</button>
+        <button type="submit" @click.prevent="send" class="submitBtn">Send</button>
       </div>
       <div v-if="requestWasMade && !isValidUrl">
         "Not a valid url"
@@ -192,4 +195,11 @@ button {
   cursor: pointer
 }
 
+.submitBtn {
+background-color: green;
+}
+
+.resetBtn {
+  background-color: #555;
+}
 </style>
