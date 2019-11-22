@@ -55,6 +55,7 @@
 <script>
 import Vue from 'vue'
 import LinkPrevue from 'link-prevue'
+import * as firebase from 'firebase'
 
 export default {
   components: {
@@ -115,7 +116,7 @@ export default {
       }
       // also add the url
       toSend.url = this.link.url
-      console.log(toSend)
+      console.log('user is: ', this.$user, ' to send is: ', toSend)
       // reset data
       Object.assign(this.$data, this.$options.data.apply(this))
     },
@@ -185,6 +186,7 @@ export default {
   justify-content: space-around;
   background: none;
   border: none;
+  color: green;
 }
 
 button {
