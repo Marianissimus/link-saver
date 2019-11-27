@@ -4,7 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router/index.js'
 import { firestorePlugin } from 'vuefire'
-import * as firebase from 'firebase'
+import firebase from 'firebase'
 
 Vue.use(firestorePlugin)
 
@@ -22,8 +22,8 @@ var firebaseConfig = {
   appId: "1:137491183275:web:c18f1c4a33466c860ee9ee"
 };
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
+firebase.initializeApp(firebaseConfig)
+export const db = firebase.firestore()
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -31,5 +31,3 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
-
-export const db = firebase.firestore()

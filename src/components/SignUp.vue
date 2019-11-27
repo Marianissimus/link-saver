@@ -42,7 +42,7 @@ export default {
         if (errorMessage) console.log(errorMessage)
 
       }).then (()=> {
-        this.$router.replace('form')
+        this.$router.replace('login')
       })
     },
     reset () {

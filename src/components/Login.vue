@@ -1,5 +1,6 @@
 <template>
   <div id="container">
+    <h1>Log in</h1>
   	<form @submit.prevent="login" autocomplete="on">
       <div id="loginInputs">
         <p>
@@ -11,15 +12,14 @@
         <p>
           <label for="password">Password: &nbsp;</label>
     		  <input type="password" name="password" id="password" v-model="password" size="26" contenteditable="true" 
-          placeholder="Your password" autocomplete="new-password"
-          />
+          placeholder="Your password" autocomplete="new-password"/>
     		</p>
         <p v-if="error">
           <span style="color: red">{{ error }}</span>
         </p>
       </div>
       <div class="btnRow">
-        <button @click="reset" class="resetBtn">Reset</button>
+        <button type="button" @click="reset" class="resetBtn">Reset</button>
         <button type="submit" class="submitBtn">Login</button>
       </div>
   	</form>
@@ -28,6 +28,7 @@
 
 <script>
 import * as firebase from 'firebase'
+import Vue from 'vue'
 
 export default {
   data () {
@@ -39,10 +40,9 @@ export default {
   },
   methods: {
     login () {
-      firebase
-      .auth()
-      .signInWithEmailAndPassword(this.email, this.password)
-      .then(data => {
+      firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+      .then(() => {
+        localStorage.setItem('user', this.email)
         this.$router.replace('form')
       })
       .catch(err => {

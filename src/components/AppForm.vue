@@ -1,6 +1,6 @@
 <template>
   <div id="container">
-  	<form @submit.prevent>
+  	<form @submit.prevent style="background-color: #565657">
       <div id="formInputs">
         <p>
           <label for="url">Url: &nbsp;</label>
@@ -13,6 +13,7 @@
             <option v-for="option in tags" v-bind:value="option" :key="option">
               {{ option }}
             </option>
+            <option value="" @select="addTagOption">Add option</option>
           </select>
         </p>
         <p>
@@ -49,6 +50,20 @@
         "Not a valid url"
       </div>
   	</form>
+    <div id="resultsTable" v-if="userResults">
+      <h1>Your links</h1>
+      <table>
+        <tr v-for="item in userResults" :key="item.url">
+          <td>{{ item.title }} </td>
+          <td>{{ item.description }} </td>
+          <td><img :src="item.images[0]" style="height: 100px; width: 100px; border-radius: 50px; object-fit: cover"></td>
+          <!-- <td> {{ item }} </td> -->
+          <td><button @click="deleteItem(item)">X</button></td>
+        </tr>
+      </table>
+    </div>
+    <div v-if="isSending">Please wait...</div>
+    <!-- <div v-if="!isSending && !userResults" style="color: red">Add some links</div> -->
   </div>
 </template>
 
@@ -56,15 +71,23 @@
 import Vue from 'vue'
 import LinkPrevue from 'link-prevue'
 import * as firebase from 'firebase'
+import { db } from '@/main'
 
 export default {
   components: {
     LinkPrevue
   },
+  created () {
+    if (localStorage.getItem('user')) this.user = localStorage.getItem('user')
+  },
+  mounted() {
+    this.getUserData()
+  },
   data () {
     return {
       link: this.getEmptyLink(),
       userInput: this.getEmptyInput(),
+      user: null,
       requestWasMade: false,
       show: {
         description: true,
@@ -73,6 +96,8 @@ export default {
       },
       tags: ['music', 'vue js', 'javascript'],
       isValidUrl: false,
+      userResults: null,
+      isSending: false,
       response: null // use to restore values in send btn options
     }
   },
@@ -100,7 +125,27 @@ export default {
         Vue.set(this.link, el, this.response[el])
       }
     },
+    deleteItem (item) {
+       let user = this.user
+       db.collection('users').doc(user).update(
+        {'links': firebase.firestore.FieldValue.arrayRemove(item)}
+      )
+      this.getUserData()
+    },
+    getUserData () {
+       db.collection('users').doc(this.user).get().then((snapshot) => {
+        if (snapshot.exists) {
+          this.userResults = snapshot.data().links
+        } else {
+          db.collection('users').doc(this.user).set({
+            links: []
+          })
+        }
+      })
+    },
     send () {
+      this.isSending = true
+
       let toSend = {}
       // send only values that are shown
       for (let el in this.link){
@@ -114,11 +159,27 @@ export default {
           toSend[el] = this.userInput[el]
         }
       }
-      // also add the url
-      toSend.url = this.link.url
-      console.log('user is: ', this.$user, ' to send is: ', toSend)
-      // reset data
-      Object.assign(this.$data, this.$options.data.apply(this))
+      console.log(1, toSend)
+
+      toSend.url = this.link.url    // also add the url
+      let user = this.user
+      db.collection('users').doc(user).get().then(doc => {
+        db.collection('users').doc(user).update({
+          links: firebase.firestore.FieldValue.arrayUnion(toSend)
+        })
+        .then(() => { 
+          db.collection('users').doc(user).get().then((snapshot) => {
+            this.userResults = snapshot.data().links
+            this.isSending = false
+          })
+        })
+      }).then(() => {
+        Object.assign(this.$data, this.$options.data.apply(this))
+        }
+      )
+    },
+    addTagOption () {
+      console.log('add tag')
     },
     reset () {
       this.link = this.getEmptyLink()
@@ -147,21 +208,27 @@ export default {
   padding: 1em;
   width: 90vw;
   min-width: 400px;
-  max-width: 600px;
   display: flex;
   margin: 0 auto;
   justify-content: center;
   background-color: white;
   border-radius: 10px;
+  flex-direction: column;
+  color: green;
 }
 
-#formInputs, #preview {
+#formInputs, #preview{
  flex: 1 0 400px;
  flex-direction: column;
  display: flex;
  padding: 1em;
  overflow: hidden;
 }
+
+ #resultsTable {
+   border: 2px solid green;
+   display: block;
+ }
 
 #formInputs p {
   display: flex;
@@ -192,7 +259,7 @@ export default {
 button {
   padding: 1em;
   border-radius: 1em;
-  background-color: #333;
+  background-color: #FF9933;
   color: white;
   cursor: pointer
 }
@@ -203,5 +270,9 @@ background-color: green;
 
 .resetBtn {
   background-color: #555;
+}
+
+p, tr, li {
+  color: green;
 }
 </style>

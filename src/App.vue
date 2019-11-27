@@ -6,7 +6,7 @@
         <router-link to="login">Log in</router-link>  
         <router-link to="SignUp">Sign in</router-link>
         <span @click="logOut">Log Out</span>
-        <span v-if="$user" style="color: green">{{ $user }}</span>
+        <span v-if="user" style="color: green">{{ user }}</span>
       </nav>
     </header>
     <main>
@@ -16,17 +16,21 @@
 </template>
 
 <script>
-import Hello from './components/Hello'
 import AppForm from './components/AppForm'
 import * as firebase from 'firebase'
 
 export default {
   name: 'app',
-  components: {
-    Hello, AppForm
+  data () {
+    return {
+      user: null
+    }
   },
-  updated () {
-    console.log(this.$user)
+  components: {
+    AppForm
+  },
+  mounted() {
+    if (localStorage.getItem('user')) this.user = localStorage.getItem('user')
   },
   methods: {
     logOut () {
@@ -35,8 +39,9 @@ export default {
         var errorCode = error.code
         var errorMessage = error.message
         if (errorMessage) console.log(`Error code: ${errorCode} with message: ${errorMessage}`)
-
       }).then (()=> {
+        localStorage.setItem('user', null)
+        this.user = null
         this.$router.replace('login')
       })
     }
