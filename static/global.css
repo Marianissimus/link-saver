@@ -1,0 +1,41 @@
+
+
+
+body {
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.deco-font {
+  font-family: 'Alatsi', sans-serif;
+  font-size: 2.5em;
+}
+
+.white-bg {
+  background-color: white;
+}
+
+.input-form {
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: white;
+}
+
+button {
+  background-image: linear-gradient(to right, #4CB8C4 0%, #3CD3AD 51%, #4CB8C4 100%);
+  padding: .5em 1em;
+  color: rgb(4, 43, 33);
+  font-size: 14px;
+  font-family: 'Roboto', sans;
+  border-radius: 7px;
+  border: none;
+  outline: 0! important;
+}
+
+button:focus {outline:0;}
+
+button:hover { background-position: right center; }

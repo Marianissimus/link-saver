@@ -2,11 +2,13 @@
   <div id="app">
     <header>
       <nav>
-        <span>Vue Link Saver</span>
-        <router-link to="login">Log in</router-link>  
-        <router-link to="SignUp">Sign in</router-link>
-        <span @click="logOut">Log Out</span>
-        <span v-if="user" style="color: green">{{ user }}</span>
+        <span>
+          <span class="deco-font">Vue Link Saver</span>
+          <span v-if="user">for {{ user }}</span>
+          <router-link to="login" v-if="!user && this.$route.path !=='/login' ">Log in</router-link>  
+          <router-link to="SignUp" v-if="!user &&  this.$route.path !=='/SignUp'">Sign in</router-link>
+          <span v-if="user" @click="logOut" style="margin-left: 1em;">Log Out</span>
+        </span>
       </nav>
     </header>
     <main>
@@ -30,7 +32,7 @@ export default {
     AppForm
   },
   mounted() {
-    if (localStorage.getItem('user')) this.user = localStorage.getItem('user')
+    if (localStorage.getItem('user') && localStorage.getItem('user') !== 'null') this.user = localStorage.getItem('user')
   },
   methods: {
     logOut () {
@@ -52,14 +54,12 @@ export default {
 <style>
 body {
   margin: 0;
-  background-color: #2c3e50;
+  background-image: radial-gradient( circle farthest-corner at 20% 25.1%,  rgba(128,102,255,1) 0%, rgba(83,112,243,1) 100.2% );
+  color: white;
 }
 
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+header {
+  text-align: center;
 }
 
 main {
@@ -68,27 +68,13 @@ main {
   color: white;
 }
 
-header {
-  margin: 0;
-  height: 56px;
-  padding: 0 16px 0 24px;
-  background-color: #35495E;
-  color: #ffffff;
-  width: 100%;
-}
-
-header span {
-  position: relative;
-  font-size: 20px;
-  line-height: 1;
-  letter-spacing: .02em;
-  font-weight: 400;
-  box-sizing: border-box;
-  padding: 1em;
-}
-
-a {
-  text-decoration: none;
-  color: white;
+nav {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-around;
+  border: 1px dotted white;
+  border-radius: 10px;
+  margin: 1em;
 }
 </style>

@@ -9,7 +9,6 @@ import firebase from 'firebase'
 Vue.use(firestorePlugin)
 
 Vue.config.productionTip = false
-Vue.prototype.$user = null // use globally 
 
 // Your web app's Firebase configuration
 var firebaseConfig = {

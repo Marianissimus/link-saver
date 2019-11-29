@@ -1,26 +1,27 @@
 <template>
   <div id="container">
-  	<form @submit.prevent style="background-color: #565657">
-      <div id="formInputs">
+  	<form @submit.prevent class="white-bg input-form">
         <p>
           <label for="url">Url: &nbsp;</label>
     		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="26" contenteditable="true" :disabled="isValidUrl"
           placeholder="Paste your link here"
           />
-          <label for="tag">Tag: &nbsp;</label>
+          <label for="tag">Choose tag: &nbsp;</label>
           <select name="tag" id="tag" v-model="userInput.tag">
             <option value="" selected disabled>Choose</option>
             <option v-for="option in tags" v-bind:value="option" :key="option">
               {{ option }}
             </option>
-            <option value="" @select="addTagOption">Add option</option>
           </select>
-        </p>
+          <form id="addTag" @submit="addTag">
+            <label for="newTag">or add:</label>
+            <input type="text" v-model="newTag">
+            <button type="submit" @click.prevent="addTag" class="submitBtn">Add</button>
+          </form>
         <p>
           <label for="notes">Notes: &nbsp;</label>
     		  <textarea rows="4" cols="48" size="48" id="notes" name="notes" v-model="userInput.notes" placeholder="Write some notes" />
     		</p>
-      </div>
       <div id="preview" v-if="link.url">
         <link-prevue :url="link.url" ref="prevue" @hook:updated="update">
           <template slot-scope="props">
@@ -57,7 +58,6 @@
           <td>{{ item.title }} </td>
           <td>{{ item.description }} </td>
           <td><img :src="item.images[0]" style="height: 100px; width: 100px; border-radius: 50px; object-fit: cover"></td>
-          <!-- <td> {{ item }} </td> -->
           <td><button @click="deleteItem(item)">X</button></td>
         </tr>
       </table>
@@ -77,8 +77,10 @@ export default {
   components: {
     LinkPrevue
   },
-  created () {
-    if (localStorage.getItem('user')) this.user = localStorage.getItem('user')
+  beforeCreate () {
+    if (localStorage.getItem('user')) { 
+      console.log('app form', localStorage.getItem('user'))
+      this.user = localStorage.getItem('user') }
   },
   mounted() {
     this.getUserData()
@@ -94,7 +96,8 @@ export default {
         title: true,
         images: true
       },
-      tags: ['music', 'vue js', 'javascript'],
+      tags: null,
+      newTag: null,
       isValidUrl: false,
       userResults: null,
       isSending: false,
@@ -136,9 +139,11 @@ export default {
        db.collection('users').doc(this.user).get().then((snapshot) => {
         if (snapshot.exists) {
           this.userResults = snapshot.data().links
+          this.tags = snapshot.data().tags
         } else {
           db.collection('users').doc(this.user).set({
-            links: []
+            links: [],
+            tags: []
           })
         }
       })
@@ -159,7 +164,6 @@ export default {
           toSend[el] = this.userInput[el]
         }
       }
-      console.log(1, toSend)
 
       toSend.url = this.link.url    // also add the url
       let user = this.user
@@ -178,8 +182,20 @@ export default {
         }
       )
     },
-    addTagOption () {
-      console.log('add tag')
+    addTag () {
+      if (!this.newTag) return false
+      let user = this.user
+      db.collection('users').doc(user).get().then(doc => {
+        db.collection('users').doc(user).update({
+          tags: firebase.firestore.FieldValue.arrayUnion(this.newTag)
+        })
+        .then(() => { 
+          db.collection('users').doc(user).get().then((snapshot) => {
+            this.tags = snapshot.data().tags
+            this.newTag = null
+          })
+        })
+      })
     },
     reset () {
       this.link = this.getEmptyLink()
