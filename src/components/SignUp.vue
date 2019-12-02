@@ -54,11 +54,4 @@ export default {
 </script>
 
 <style scoped>
-.submitBtn {
-background-color: green;
-}
-
-.resetBtn {
-  background-color: #555;
-}
 </style>

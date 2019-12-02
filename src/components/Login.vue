@@ -5,7 +5,7 @@
       <div id="loginInputs">
         <p>
           <label for="email">Email: &nbsp;</label>
-    		  <input type="email" name="email" id="email" v-model="email" size="26" contenteditable="true" 
+    		  <input type="email" name="email" id="email" v-model="email" size="31" contenteditable="true" 
           placeholder="Your email address" autocomplete="email"
           />
         </p>
@@ -60,11 +60,4 @@ export default {
 </script>
 
 <style scoped>
-.submitBtn {
-background-color: green;
-}
-
-.resetBtn {
-  background-color: #555;
-}
 </style>
