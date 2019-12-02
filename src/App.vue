@@ -12,7 +12,7 @@
       </nav>
     </header>
     <main>
-      <router-view></router-view> 
+      <router-view :user="user"></router-view>
     </main>
   </div>
 </template>
@@ -32,7 +32,14 @@ export default {
     AppForm
   },
   mounted() {
-    if (localStorage.getItem('user') && localStorage.getItem('user') !== 'null') this.user = localStorage.getItem('user')
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.user = user.email
+        this.$router.replace('form')
+      } else {
+        console.log('not logged in')
+      }
+    })
   },
   methods: {
     logOut () {
@@ -42,7 +49,6 @@ export default {
         var errorMessage = error.message
         if (errorMessage) console.log(`Error code: ${errorCode} with message: ${errorMessage}`)
       }).then (()=> {
-        localStorage.setItem('user', null)
         this.user = null
         this.$router.replace('login')
       })
@@ -54,7 +60,6 @@ export default {
 <style>
 body {
   margin: 0;
-  background-image: radial-gradient( circle farthest-corner at 20% 25.1%,  rgba(128,102,255,1) 0%, rgba(83,112,243,1) 100.2% );
   color: white;
 }
 

@@ -19,8 +19,8 @@
         </p>
       </div>
       <div class="btnRow">
-        <button type="button" @click="reset" class="resetBtn">Reset</button>
-        <button type="submit" class="submitBtn">Login</button>
+        <button type="button" @click="reset" class="resetBtn bk-red">Reset</button>
+        <button type="submit" class="submitBtn bk-red">Login</button>
       </div>
   	</form>
   </div>
@@ -41,15 +41,16 @@ export default {
   methods: {
     login () {
       firebase.auth().signInWithEmailAndPassword(this.email, this.password)
-      .then(() => {
-        localStorage.setItem('user', this.email)
-      }).
-      then(() => {
-        this.$router.replace('form')
-      })
-      .catch(err => {
-        this.error = err.message
-      })
+      // .then(res => {  
+      //   localStorage.setItem('user', res.user.email)
+      //   }
+      // ).
+      // then(() => {
+      //   this.$router.replace('form')
+      // })
+      // .catch(err => {
+      //   this.error = err.message
+      // })
     },
     reset () {
       this.email = ''

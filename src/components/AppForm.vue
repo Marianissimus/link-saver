@@ -1,27 +1,32 @@
 <template>
   <div id="container">
-  	<form @submit.prevent class="white-bg input-form">
-        <p>
+    <form @submit.prevent class="input-form">
+      <div>
+        <fieldset>
           <label for="url">Url: &nbsp;</label>
-    		  <input type="url" name="url" id="url" v-model.lazy="link.url" size="26" contenteditable="true" :disabled="isValidUrl"
+          <input type="text" name="url" id="url" v-model.lazy="link.url" size="100" contenteditable="true" :disabled="isValidUrl"
           placeholder="Paste your link here"
           />
-          <label for="tag">Choose tag: &nbsp;</label>
+        </fieldset>
+      </div>
+      <div>
+        <fieldset>
+          <label for="tag">Tag: &nbsp;</label>
           <select name="tag" id="tag" v-model="userInput.tag">
             <option value="" selected disabled>Choose</option>
             <option v-for="option in tags" v-bind:value="option" :key="option">
               {{ option }}
             </option>
-          </select>
-          <form id="addTag" @submit="addTag">
-            <label for="newTag">or add:</label>
-            <input type="text" v-model="newTag">
-            <button type="submit" @click.prevent="addTag" class="submitBtn">Add</button>
-          </form>
-        <p>
-          <label for="notes">Notes: &nbsp;</label>
-    		  <textarea rows="4" cols="48" size="48" id="notes" name="notes" v-model="userInput.notes" placeholder="Write some notes" />
-    		</p>
+          </select>  
+          <label for="newTag">or:</label>
+          <input type="text" v-model="newTag">
+          <button @click.prevent="addTag" class="smallbtn" :disabled="newTag !== 'null'">Add</button>
+        </fieldset>
+        <fieldset> 
+          <label for="notes">Notes:</label>
+          <textarea id="notes" name="notes" v-model="userInput.notes" placeholder="Write some notes" />
+        </fieldset>
+      </div>
       <div id="preview" v-if="link.url">
         <link-prevue :url="link.url" ref="prevue" @hook:updated="update">
           <template slot-scope="props">
@@ -36,12 +41,19 @@
         </link-prevue>
       </div>
       <div id="options" v-if="isValidUrl" class="card options">
-        <label for="showTitle">Title</label>
-        <input type="checkbox" name="showTitle" id="showTitle" v-model="show.title">
-        <label for="showDescription">Description</label>
-        <input type="checkbox" name="showDescription" id="showDescription" v-model="show.description">
-        <label for="showImage">Image</label>
-        <input type="checkbox" name="showImage" id="showImage" v-model="show.images">
+        Save:
+        <fieldset>
+          <label for="showTitle">Title</label>
+          <input type="checkbox" name="showTitle" id="showTitle" v-model="show.title">
+        </fieldset>
+        <fieldset>
+          <label for="showDescription">Description</label>
+          <input type="checkbox" name="showDescription" id="showDescription" v-model="show.description">
+        </fieldset>
+        <fieldset>
+          <label for="showImage">Image</label>
+          <input type="checkbox" name="showImage" id="showImage" v-model="show.images">
+        </fieldset>
       </div>
       <div v-if="isValidUrl" class="btnRow">
         <button @click.prevent="reset" class="resetBtn">Reset</button>
@@ -50,7 +62,7 @@
       <div v-if="requestWasMade && !isValidUrl">
         "Not a valid url"
       </div>
-  	</form>
+    </form>
     <div id="resultsTable" v-if="userResults">
       <h1>Your links</h1>
       <table>
@@ -74,13 +86,9 @@ import * as firebase from 'firebase'
 import { db } from '@/main'
 
 export default {
+  props: ['user'],
   components: {
     LinkPrevue
-  },
-  beforeCreate () {
-    if (localStorage.getItem('user')) { 
-      console.log('app form', localStorage.getItem('user'))
-      this.user = localStorage.getItem('user') }
   },
   mounted() {
     this.getUserData()
@@ -89,7 +97,6 @@ export default {
     return {
       link: this.getEmptyLink(),
       userInput: this.getEmptyInput(),
-      user: null,
       requestWasMade: false,
       show: {
         description: true,
@@ -136,10 +143,12 @@ export default {
       this.getUserData()
     },
     getUserData () {
+      // console.log(35, this.user)
        db.collection('users').doc(this.user).get().then((snapshot) => {
         if (snapshot.exists) {
           this.userResults = snapshot.data().links
           this.tags = snapshot.data().tags
+          console.log(6, this.userResults)
         } else {
           db.collection('users').doc(this.user).set({
             links: [],
@@ -192,8 +201,13 @@ export default {
         .then(() => { 
           db.collection('users').doc(user).get().then((snapshot) => {
             this.tags = snapshot.data().tags
-            this.newTag = null
           })
+        })
+        .then(() => {
+          this.userInput.tag = this.newTag
+        })
+        .then(() => {
+          this.newTag = null
         })
       })
     },
@@ -227,36 +241,26 @@ export default {
   display: flex;
   margin: 0 auto;
   justify-content: center;
-  background-color: white;
-  border-radius: 10px;
+  border-radius: 4px;
   flex-direction: column;
-  color: green;
+  background-color: white;
 }
 
-#formInputs, #preview{
- flex: 1 0 400px;
- flex-direction: column;
- display: flex;
- padding: 1em;
- overflow: hidden;
+.input-form {
+  background: #485563; 
+  color: white;
+  display: inline;
 }
 
- #resultsTable {
-   border: 2px solid green;
-   display: block;
- }
-
-#formInputs p {
-  display: flex;
-  justify-content: space-between;
+.input-form fieldset {
+  display: inline-block;
+  border: none;
 }
 
 .card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: 1px dashed #232323;
-  padding: 1em;
+  width: 300px;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .card-img-top, .card-block{
@@ -264,31 +268,35 @@ export default {
   height: auto;
 }
 
+#notes{
+  position: relative;
+  top: 1.5em;
+  width: 20em;
+}
+
+#preview {
+ flex: 1 0 400px;
+ flex-direction: column;
+ display: flex;
+ padding: 1em;
+ overflow: hidden;
+ background-color: white;
+ color: black;
+ border: 1px dashed #232323;
+ text-align: center;
+}
+
 .options {
-  flex-direction: row;
-  justify-content: space-around;
-  background: none;
-  border: none;
+  text-align: center;
+  margin: 0 auto;
+  width: 100%;
   color: green;
+  background-color: white;
 }
 
-button {
-  padding: 1em;
-  border-radius: 1em;
-  background-color: #FF9933;
-  color: white;
-  cursor: pointer
-}
+ #resultsTable {
+   border: 2px solid green;
+   display: block;
+ }
 
-.submitBtn {
-background-color: green;
-}
-
-.resetBtn {
-  background-color: #555;
-}
-
-p, tr, li {
-  color: green;
-}
 </style>
