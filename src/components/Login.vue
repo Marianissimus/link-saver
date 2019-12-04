@@ -2,16 +2,16 @@
   <div id="container">
     <h1>Log in</h1>
   	<form @submit.prevent="login" autocomplete="on">
-      <div id="loginInputs">
+      <div class="loginorsignup">
         <p>
           <label for="email">Email: &nbsp;</label>
-    		  <input type="email" name="email" id="email" v-model="email" size="31" contenteditable="true" 
+    		  <input type="email" name="email" id="email" v-model="email" size="31" contenteditable="true"
           placeholder="Your email address" autocomplete="email"
           />
         </p>
         <p>
           <label for="password">Password: &nbsp;</label>
-    		  <input type="password" name="password" id="password" v-model="password" size="26" contenteditable="true" 
+    		  <input type="password" name="password" id="password" v-model="password" size="26" contenteditable="true"
           placeholder="Your password" autocomplete="new-password"/>
     		</p>
         <p v-if="error">

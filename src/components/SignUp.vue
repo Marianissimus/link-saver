@@ -1,10 +1,11 @@
 <template>
   <div id="container">
+    <h1>Sign up</h1>
   	<form @submit.prevent="signUp" autocomplete="on">
-      <div id="loginInputs">
+      <div  class="loginorsignup">
         <p>
           <label for="email">Email: &nbsp;</label>
-    		  <input type="email" name="email" id="email" v-model="email" size="26" contenteditable="true" 
+    		  <input type="email" name="email" id="email" v-model="email" size="31" contenteditable="true" 
           placeholder="Your email address" autocomplete="email"
           />
         </p>
@@ -16,8 +17,8 @@
     		</p>
       </div>
       <div class="btnRow">
-        <button @click.prevent="reset" class="resetBtn">Reset</button>
-        <button type="submit" class="submitBtn">Sign Up</button>
+        <button @click.prevent="reset" class="resetBtn bk-red">Reset</button>
+        <button type="submit" class="submitBtn bk-red">Sign Up</button>
       </div>
   	</form>
   </div>

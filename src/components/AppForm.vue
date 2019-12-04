@@ -17,12 +17,12 @@
             <option v-for="option in tags" v-bind:value="option" :key="option">
               {{ option }}
             </option>
-          </select>  
+          </select>
           <label for="newTag">or:</label>
           <input type="text" v-model="newTag">
-          <button @click.prevent="addTag" class="smallbtn" :disabled="newTag !== 'null'">Add</button>
+          <button @click.prevent="addTag" class="smallbtn" :disabled="!newTag">Add</button>
         </fieldset>
-        <fieldset> 
+        <fieldset>
           <label for="notes">Notes:</label>
           <textarea id="notes" name="notes" v-model="userInput.notes" placeholder="Write some notes" />
         </fieldset>
@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     getEmptyLink () {
-      return { 
+      return {
         url: '',
         title: '',
         description: '',
@@ -180,7 +180,7 @@ export default {
         db.collection('users').doc(user).update({
           links: firebase.firestore.FieldValue.arrayUnion(toSend)
         })
-        .then(() => { 
+        .then(() => {
           db.collection('users').doc(user).get().then((snapshot) => {
             this.userResults = snapshot.data().links
             this.isSending = false
