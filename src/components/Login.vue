@@ -1,6 +1,6 @@
 <template>
   <div id="container">
-    <h1>Log in</h1>
+    <h1>Log in {{ user }} </h1>
   	<form @submit.prevent="login" autocomplete="on">
       <div class="loginorsignup">
         <p>
@@ -29,6 +29,7 @@
 <script>
 import * as firebase from 'firebase'
 import Vue from 'vue'
+import { store, mutations } from "../store"
 
 export default {
   data () {
@@ -38,19 +39,19 @@ export default {
       error: null
     }
   },
+  computed: {
+   user () {
+    return store.user
+   }
+  },
   methods: {
     login () {
-      firebase.auth().signInWithEmailAndPassword(this.email, this.password)
-      // .then(res => {  
-      //   localStorage.setItem('user', res.user.email)
-      //   }
-      // ).
-      // then(() => {
-      //   this.$router.replace('form')
-      // })
-      // .catch(err => {
-      //   this.error = err.message
-      // })
+      firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(response => {
+        mutations.setUser(response.user.email)
+        mutations.setIsLoggedIn(true)
+        localStorage.setItem('user', response.user.email)
+        this.$router.replace('form')
+      })
     },
     reset () {
       this.email = ''

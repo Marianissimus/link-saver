@@ -6,7 +6,6 @@ body, html, * {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   margin: 0;
-  color: white;
 }
 
 header {
@@ -27,6 +26,7 @@ nav {
   border: 2px dashed white;
   border-radius: 10px;
   margin: 1em;
+  color: white;
 }
 
 nav a, nav span {
@@ -122,4 +122,99 @@ input, select, textarea {
 
 textarea {
   width: 50%;
+}
+
+
+/* the main form */
+
+/* add link form */
+#container {
+  padding: 1em;
+  width: 90vw;
+  min-width: 400px;
+  display: flex;
+  margin: 0 auto;
+  justify-content: center;
+  border-radius: 4px;
+  flex-direction: column;
+  background-color: white;
+}
+
+.input-form {
+  background: #485563;
+  color: white;
+}
+
+.input-form fieldset {
+  border: none;
+}
+
+#tagsAndNotes {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#notes {
+  flex: 2 auto;
+}
+
+#tags {
+  flex: 1 auto;
+}
+
+.card {
+  width: 300px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.card-img-top, .card-block{
+  max-width: 300px;
+  height: auto;
+}
+
+
+#preview {
+ flex: 1 0 400px;
+ flex-direction: column;
+ display: flex;
+ padding: 1em;
+ overflow: hidden;
+ background-color: white;
+ color: black;
+ border: 1px dashed #232323;
+ text-align: center;
+}
+
+.options {
+  text-align: center;
+  margin: 0 auto;
+  width: 100%;
+  background-color: white;
+}
+
+
+#resultsTable tr td {
+  padding: 1em;
+  color: #010101;
+}
+
+#resultsTable td:first-child{
+  background-color: white;
+  border: 1px solid gray;
+}
+
+#resultsTable tr:nth-of-type(even){
+ background: #D3CCE3;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #E9E4F0, #D3CCE3);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #E9E4F0, #D3CCE3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+#resultsTable tr:nth-of-type(odd){
+background: #FFEFBA;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to top, #FFFFFF, #FFEFBA);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to top, #FFFFFF, #FFEFBA); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
 }

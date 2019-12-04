@@ -4,13 +4,12 @@
       <div>
         <fieldset>
           <label for="url">Url: &nbsp;</label>
-          <input type="text" name="url" id="url" v-model.lazy="link.url" size="100" contenteditable="true" :disabled="isValidUrl"
-          placeholder="Paste your link here"
+          <input type="text" name="url" id="url" v-model.lazy="link.url" contenteditable="true" :disabled="isValidUrl" placeholder="Paste your link here" style="width: 100%"
           />
         </fieldset>
       </div>
-      <div>
-        <fieldset>
+      <div id="tagsAndNotes">
+        <fieldset id="tags">
           <label for="tag">Tag: &nbsp;</label>
           <select name="tag" id="tag" v-model="userInput.tag">
             <option value="" selected disabled>Choose</option>
@@ -22,9 +21,9 @@
           <input type="text" v-model="newTag">
           <button @click.prevent="addTag" class="smallbtn" :disabled="!newTag">Add</button>
         </fieldset>
-        <fieldset>
+        <fieldset id="notes">
           <label for="notes">Notes:</label>
-          <textarea id="notes" name="notes" v-model="userInput.notes" placeholder="Write some notes" />
+          <input type="text" name="notes" v-model="userInput.notes" placeholder="Write some notes" style ="width: 100px;"/>
         </fieldset>
       </div>
       <div id="preview" v-if="link.url">
@@ -67,10 +66,13 @@
       <h1>Your links</h1>
       <table>
         <tr v-for="item in userResults" :key="item.url">
-          <td>{{ item.title }} </td>
-          <td>{{ item.description }} </td>
           <td><img :src="item.images[0]" style="height: 100px; width: 100px; border-radius: 50px; object-fit: cover"></td>
-          <td><button @click="deleteItem(item)">X</button></td>
+          <td>
+            <p><h3 style="text-align: left">{{ item.title }}</h3></p>
+            <br/>
+            <p style="text-align: left">{{ item.description }}</p>
+          </td>
+          <td><button class="bk-red" @click="deleteItem(item)">X</button></td>
         </tr>
       </table>
     </div>
@@ -84,9 +86,9 @@ import Vue from 'vue'
 import LinkPrevue from 'link-prevue'
 import * as firebase from 'firebase'
 import { db } from '@/main'
+import { store, mutations } from "../store"
 
 export default {
-  props: ['user'],
   components: {
     LinkPrevue
   },
@@ -110,6 +112,14 @@ export default {
       isSending: false,
       response: null // use to restore values in send btn options
     }
+  },
+  computed: {
+   user () {
+    return store.user
+   },
+   isLoggedIn () {
+    return store.isLoggedIn
+   }
   },
   methods: {
     getEmptyLink () {
@@ -136,15 +146,20 @@ export default {
       }
     },
     deleteItem (item) {
-       let user = this.user
-       db.collection('users').doc(user).update(
+       db.collection('users').doc(this.user).update(
         {'links': firebase.firestore.FieldValue.arrayRemove(item)}
       )
       this.getUserData()
     },
     getUserData () {
-      // console.log(35, this.user)
-       db.collection('users').doc(this.user).get().then((snapshot) => {
+        let user = this.user
+
+        // this is for page reload, mostly for testing purposes
+        if (!this.user) user = localStorage.getItem('user')
+        mutations.setUser(user)
+        // end of work-around
+
+        db.collection('users').doc(user).get().then((snapshot) => {
         if (snapshot.exists) {
           this.userResults = snapshot.data().links
           this.tags = snapshot.data().tags
@@ -232,71 +247,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-#container {
-  padding: 1em;
-  width: 90vw;
-  min-width: 400px;
-  display: flex;
-  margin: 0 auto;
-  justify-content: center;
-  border-radius: 4px;
-  flex-direction: column;
-  background-color: white;
-}
-
-.input-form {
-  background: #485563; 
-  color: white;
-  display: inline;
-}
-
-.input-form fieldset {
-  display: inline-block;
-  border: none;
-}
-
-.card {
-  width: 300px;
-  text-align: center;
-  margin: 0 auto;
-}
-
-.card-img-top, .card-block{
-  max-width: 300px;
-  height: auto;
-}
-
-#notes{
-  position: relative;
-  top: 1.5em;
-  width: 20em;
-}
-
-#preview {
- flex: 1 0 400px;
- flex-direction: column;
- display: flex;
- padding: 1em;
- overflow: hidden;
- background-color: white;
- color: black;
- border: 1px dashed #232323;
- text-align: center;
-}
-
-.options {
-  text-align: center;
-  margin: 0 auto;
-  width: 100%;
-  color: green;
-  background-color: white;
-}
-
- #resultsTable {
-   border: 2px solid green;
-   display: block;
- }
-
-</style>

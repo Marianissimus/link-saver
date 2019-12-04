@@ -41,11 +41,4 @@ let router = new Router({
   ]
 })
 
-router.beforeEach((to, from, next) => {
-  if (firebase.auth().currentUser !== null) {
-    this.$user = firebase.auth().currentUser.email
-  }
-  next()
-})
-
 export default router

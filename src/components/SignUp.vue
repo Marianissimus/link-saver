@@ -5,13 +5,13 @@
       <div  class="loginorsignup">
         <p>
           <label for="email">Email: &nbsp;</label>
-    		  <input type="email" name="email" id="email" v-model="email" size="31" contenteditable="true" 
+    		  <input type="email" name="email" id="email" v-model="email" size="31" contenteditable="true"
           placeholder="Your email address" autocomplete="email"
           />
         </p>
         <p>
           <label for="password">Password: &nbsp;</label>
-    		  <input type="password" name="password" id="password" v-model="password" size="26" contenteditable="true" 
+    		  <input type="password" name="password" id="password" v-model="password" size="26" contenteditable="true"
           placeholder="Your password" autocomplete="current-password"
           />
     		</p>
@@ -37,7 +37,6 @@ export default {
   methods: {
     signUp () {
       firebase.auth().createUserWithEmailAndPassword(this.email, this.password).catch(function(error) {
-        // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
         if (errorMessage) console.log(errorMessage)
@@ -53,6 +52,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>
