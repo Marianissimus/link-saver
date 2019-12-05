@@ -1,5 +1,5 @@
 <template>
-  <div id="container">
+  <div class="container login">
     <h1>Sign up</h1>
   	<form @submit.prevent="signUp" autocomplete="on">
       <div  class="loginorsignup">
@@ -17,8 +17,8 @@
     		</p>
       </div>
       <div class="btnRow">
-        <button @click.prevent="reset" class="resetBtn bk-red">Reset</button>
-        <button type="submit" class="submitBtn bk-red">Sign Up</button>
+        <button @click.prevent="reset" class="submitBtn bk-red">Reset</button>
+        <button type="submit" class="submitBtn bk-green">Sign Up</button>
       </div>
   	</form>
   </div>

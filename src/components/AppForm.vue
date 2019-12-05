@@ -1,5 +1,5 @@
 <template>
-  <div id="container">
+  <div class="container main">
     <form @submit.prevent class="input-form">
       <div>
         <fieldset>
@@ -19,7 +19,7 @@
           </select>
           <label for="newTag">or:</label>
           <input type="text" v-model="newTag">
-          <button @click.prevent="addTag" class="smallbtn" :disabled="!newTag">Add</button>
+          <button @click.prevent="addTag" class="smallbtn bk-green" :disabled="!newTag">Add</button>
         </fieldset>
         <fieldset id="notes">
           <label for="notes">Notes:</label>
@@ -27,7 +27,7 @@
         </fieldset>
       </div>
       <div id="preview" v-if="link.url">
-        <link-prevue :url="link.url" ref="prevue" @hook:updated="update">
+        <link-prevue :url="link.url" ref="prevue" @hook:updated="update">ƒ
           <template slot-scope="props">
             <div class="card">
               <img class="card-img-top" v-if="show.images" :src="props.img" :alt="props.title">
@@ -39,8 +39,8 @@
           </template>
         </link-prevue>
       </div>
-      <div id="options" v-if="isValidUrl" class="card options">
-        Save:
+      <div id="options" v-if="isValidUrl" class="options">
+        <span>Save:</span>
         <fieldset>
           <label for="showTitle">Title</label>
           <input type="checkbox" name="showTitle" id="showTitle" v-model="show.title">
@@ -55,8 +55,8 @@
         </fieldset>
       </div>
       <div v-if="isValidUrl" class="btnRow">
-        <button @click.prevent="reset" class="resetBtn">Reset</button>
-        <button type="submit" @click.prevent="send" class="submitBtn">Send</button>
+        <button @click.prevent="reset" class="bk-red submitBtn">Reset</button>
+        <button type="submit" @click.prevent="send" class="bk-green submitBtn">Send</button>
       </div>
       <div v-if="requestWasMade && !isValidUrl">
         "Not a valid url"
@@ -68,14 +68,25 @@
         <tr v-for="item in userResults" :key="item.url">
           <td><img :src="item.images[0]" style="height: 100px; width: 100px; border-radius: 50px; object-fit: cover"></td>
           <td>
-            <p><h3 style="text-align: left">{{ item.title }}</h3></p>
+            <p v-if="item.tag" style="text-align: right"><span style="font-size: 12px">in: {{ item.tag }}</span></p>
+            <p v-if="item.title"><h3 style="text-align: left">{{ item.title }}</h3></p>
             <br/>
-            <p style="text-align: left">{{ item.description }}</p>
+            <p style="text-align: left" v-if="item.description">{{ item.description }}</p>
+            <br />
+            <p style="text-align: right; font-size: 12px" v-if="item.notes">notes: {{ item.notes }}</p>
           </td>
-          <td><button class="bk-red" @click="deleteItem(item)">X</button></td>
+          <td>
+            <button class="bk-red smallbtn" @click="deleteItem(item)">Del</button>
+            <button class="bk-orange smallbtn" @click="editItem(item)">Edit</button>
+            <button class="bk-green smallbtn"><a :href="item.url" target="_blanc">Open</a></button>
+          </td>
         </tr>
       </table>
     </div>
+    <Modal v-if="showModal" @close="showModal = false; itemToDelete = null" @confirmDelete="removeItem">
+      <template v-slot:header>Sure delete?</template>
+    </Modal>
+
     <div v-if="isSending">Please wait...</div>
     <!-- <div v-if="!isSending && !userResults" style="color: red">Add some links</div> -->
   </div>
@@ -87,10 +98,11 @@ import LinkPrevue from 'link-prevue'
 import * as firebase from 'firebase'
 import { db } from '@/main'
 import { store, mutations } from "../store"
+import Modal from './Modal'
 
 export default {
   components: {
-    LinkPrevue
+    LinkPrevue, Modal
   },
   mounted() {
     this.getUserData()
@@ -110,6 +122,8 @@ export default {
       isValidUrl: false,
       userResults: null,
       isSending: false,
+      showModal: false,
+      itemToDelete: null,
       response: null // use to restore values in send btn options
     }
   },
@@ -146,10 +160,22 @@ export default {
       }
     },
     deleteItem (item) {
+        this.showModal = true
+        this.itemToRemove = item
+    },
+    removeItem () {
+       db.collection('users').doc(this.user).update(
+        {'links': firebase.firestore.FieldValue.arrayRemove(this.itemToRemove)}
+      ).then(() => {
+        this.showModal = false;
+        this.getUserData()
+      })
+    },
+    editItem (item) {
        db.collection('users').doc(this.user).update(
         {'links': firebase.firestore.FieldValue.arrayRemove(item)}
       )
-      this.getUserData()
+      this.link = item
     },
     getUserData () {
         let user = this.user
@@ -163,7 +189,6 @@ export default {
         if (snapshot.exists) {
           this.userResults = snapshot.data().links
           this.tags = snapshot.data().tags
-          console.log(6, this.userResults)
         } else {
           db.collection('users').doc(this.user).set({
             links: [],

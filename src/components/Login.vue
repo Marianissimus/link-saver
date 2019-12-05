@@ -1,5 +1,5 @@
 <template>
-  <div id="container">
+  <div class="container login">
     <h1>Log in {{ user }} </h1>
   	<form @submit.prevent="login" autocomplete="on">
       <div class="loginorsignup">
@@ -19,8 +19,8 @@
         </p>
       </div>
       <div class="btnRow">
-        <button type="button" @click="reset" class="resetBtn bk-red">Reset</button>
-        <button type="submit" class="submitBtn bk-red">Login</button>
+        <button type="button" @click="reset" class="submitBtn bk-red">Reset</button>
+        <button type="submit" class="submitBtn bk-green">Login</button>
       </div>
   	</form>
   </div>
