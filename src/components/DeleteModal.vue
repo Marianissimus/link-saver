@@ -1,6 +1,5 @@
 <template>
   <transition name="modal">
-    {{ item }}
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
@@ -17,8 +16,8 @@
 
           <div class="modal-footer">
             <slot name="footer">
-              <button class="bk-red smallbtn" @click="$emit('close')">Cancel</button>
-              <button class="bk-green smallbtn" @click="$emit('confirmDelete')">OK</button>
+              <button class="bk-red smallbtn" @click="$emit('close')">No</button>
+              <button class="bk-green smallbtn" @click="$emit('confirmDelete')">Yes</button>
             </slot>
           </div>
         </div>
