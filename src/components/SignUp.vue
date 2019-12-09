@@ -1,5 +1,5 @@
 <template>
-  <div class="container login">
+  <div class="login">
     <h1>Sign up</h1>
   	<form @submit.prevent="signUp" autocomplete="on">
       <div  class="loginorsignup">

@@ -70,11 +70,32 @@
         </button>
       </div>
     </form>
-    <div v-if="userResults">
-      <h1>Your links</h1>
+    <div v-if="userResults" class="resultsContainer">
+      <table rules="none" style="width: 100%;">
+        <tr>
+          <td style="text-align: right">
+            <fieldset style="border: none;">
+              <label for="tagFilter"><span style="color: #232323">Show: &nbsp;</span></label>
+              <select name="tagFilter" id="tagFilter" @change="filterResults($event.target.value)">
+                <option selected value="all">All</option>
+                <option v-for="option in tags" :key="option">
+                  {{ option }}
+                </option>
+                <option value="uncategorized">Uncategorized</option>
+              </select>
+            </fieldset>
+          </td>
+        </tr>
+      </table>
       <table id="resultsTable" rules="none">
-        <tr v-for="item in userResults" :key="item.url">
-          <td><img :src="item.images[0]" style="height: 100px; width: 100px; border-radius: 50px; object-fit: cover"></td>
+        <tr v-if="!filteredResults.length">
+          <td></td>
+          <td style="height: 100px; width: 100px"><p>No results</p></td>
+          <td></td>
+        </tr>
+        <tr v-for="item in filteredResults" :key="item.url">
+          <td v-if="item.images"><img :src="item.images[0]" style="height: 100px; width: 100px; border-radius: 50px; object-fit: cover"></td>
+          <td v-else><span style="font-style: italic">No image</span></td>
           <td>
             <p v-if="item.tag" style="text-align: right"><span style="font-size: 12px">in: {{ item.tag }}</span></p>
             <p v-if="item.title"><h3 style="text-align: left">{{ item.title }}</h3></p>
@@ -98,7 +119,6 @@
     <TagsModal v-if="showTagsModal" @close="showTagsModal = false" :tags="tags" :user="user" @deleted="getUserData">
       <template v-slot:header>Tag editor</template>
     </TagsModal>
-
 
     <div v-if="isSending">Please wait...</div>
     <!-- <div v-if="!isSending && !userResults" style="color: red">Add some links</div> -->
@@ -140,6 +160,7 @@ export default {
       itemToDelete: null,
       isEditMode: false,
       showTagsModal: false,
+      filteredResults: [],
       response: null // use to restore values in send btn options
     }
   },
@@ -207,6 +228,7 @@ export default {
         db.collection('users').doc(user).get().then((snapshot) => {
         if (snapshot.exists) {
           this.userResults = snapshot.data().links
+          this.filteredResults = snapshot.data().links
           this.tags = snapshot.data().tags
         } else {
           db.collection('users').doc(this.user).set({
@@ -278,6 +300,15 @@ export default {
     },
     deleteTag () {
       console.log('delete in app form')
+    },
+    filterResults (tag) {
+      if (tag === 'all') {
+        this.filteredResults = this.userResults
+      } else if (tag === 'uncategorized') {
+        this.filteredResults = this.userResults.filter(el => !el.tag)
+      } else {
+        this.filteredResults = this.userResults.filter(el => el.tag === tag)
+      }
     },
     reset () {
       this.link = this.getEmptyLink()

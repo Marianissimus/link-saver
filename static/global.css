@@ -80,6 +80,7 @@ nav a, nav span {
 a {
   color: white;
   text-decoration: none;
+  pointer-events: cursor;
 }
 
 form {
@@ -136,7 +137,7 @@ input, select, textarea {
   padding: 1em;
   width: 90vw;
   min-width: 400px;
-  margin: 0 auto;
+  margin: 1em auto;
   justify-content: center;
   border-radius: 4px;
   flex-direction: column;
@@ -207,6 +208,12 @@ input, select, textarea {
   align-items: baseline;
 }
 
+/* results table */
+
+.resultsContainer {
+  margin-top: 1em;
+}
+
 #resultsTable {
   width: 100%;
 }
@@ -215,6 +222,7 @@ input, select, textarea {
   color: #010101;
   padding: .4em;
 }
+
 
 #resultsTable td:last-child{
   min-width: 200px;
@@ -230,9 +238,9 @@ input, select, textarea {
 }
 
 #resultsTable tr:nth-of-type(odd){
-  background: #EDE574;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to top, #E1F5C4, #EDE574);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to top, #E1F5C4, #EDE574); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #E0EAFC;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to left, #CFDEF3, #E0EAFC);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #CFDEF3, #E0EAFC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 #resultsTable tr:nth-of-type(even){

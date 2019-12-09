@@ -1,5 +1,5 @@
 <template>
-  <div class="container login">
+  <div class="login">
     <h1>Log in {{ user }} </h1>
   	<form @submit.prevent="login" autocomplete="on">
       <div class="loginorsignup">
