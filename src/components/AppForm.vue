@@ -28,7 +28,7 @@
           <label for="newTag">or:</label>
           <input type="text" v-model="newTag">
           <button @click.prevent="addTag" class="smallbtn bk-green" :disabled="!newTag">Add</button>
-          <button class="bk-orange smallbtn" style="width: 60px;" @click="showTagsModal = true"><i class="material-icons" style="font-size: 14px; margin-top: 5px">edit</i><br/>Edit Tags</button>
+          <button class="bk-red smallbtn" style="width: 70px;" @click="showTagsModal = true"><i class="material-icons" style="font-size: 14px; margin-top: 5px">delete</i><br/>Delete Tags</button>
         </fieldset>
       </div>
       <div id="preview" v-if="link.url">
@@ -87,20 +87,20 @@
           </td>
         </tr>
       </table>
-      <table id="resultsTable" rules="none">
+      <table id="resultsTable" style="border-collapse: collapse;">
         <tr v-if="!filteredResults.length">
           <td></td>
           <td style="height: 100px; width: 100px"><p>No results</p></td>
           <td></td>
         </tr>
-        <tr v-for="item in filteredResults" :key="item.url">
-          <td v-if="item.images"><img :src="item.images[0]" style="height: 100px; width: 100px; border-radius: 50px; object-fit: cover"></td>
-          <td v-else><span style="font-style: italic">No image</span></td>
+        <tr v-for="item in filteredResults" :key="item.url" style="border: 1px solid #f5f5f5">
+          <td v-if="item.images" style="background-color: white"><img :src="item.images[0]" style="height: 100px; width: auto; object-fit: cover"></td>
+          <td v-else style="background-color: white"><span>No image</span></td>
           <td>
             <p v-if="item.tag" style="text-align: right"><span style="font-size: 12px">in: {{ item.tag }}</span></p>
-            <p v-if="item.title"><h3 style="text-align: left">{{ item.title }}</h3></p>
+            <p v-if="item.title"><h4 style="text-align: left">{{ item.title }}</h4></p>
             <br/>
-            <p style="text-align: left" v-if="item.description">{{ item.description }}</p>
+            <p style="text-align: left; font-size: 14px" v-if="item.description">{{ item.description }}</p>
             <br />
             <p style="text-align: right; font-size: 12px" v-if="item.notes">notes: {{ item.notes }}</p>
           </td>
@@ -116,8 +116,7 @@
       <template v-slot:header>Are you sure?</template>
     </DeleteModal>
 
-    <TagsModal v-if="showTagsModal" @close="showTagsModal = false" :tags="tags" :user="user" @deleted="getUserData">
-      <template v-slot:header>Tag editor</template>
+    <TagsModal v-if="showTagsModal" @close="showTagsModal = false" :tags="tags" :user="user" @deleted="deleteTag">
     </TagsModal>
 
     <div v-if="isSending">Please wait...</div>
@@ -217,6 +216,26 @@ export default {
       }
       this.link.url = item.url
     },
+    deleteTag (tag) {
+      let tempResults = this.userResults
+      for (let item of tempResults) {
+        if (item.tag === tag) {
+         delete item.tag
+        }
+      }
+      // delete tags from links on server
+      db.collection('users').doc(this.user).update(
+        {'links': tempResults }
+      )
+      // update tags
+      let user = this.user
+      db.collection('users').doc(user).get().then((snapshot) => {
+        if (snapshot.exists) {
+          this.tags = snapshot.data().tags
+        }
+      })
+      this.getUserData()
+    },
     getUserData () {
         let user = this.user
 
@@ -270,6 +289,7 @@ export default {
         .then(() => {
           db.collection('users').doc(user).get().then((snapshot) => {
             this.userResults = snapshot.data().links
+            this.filteredResults = snapshot.data().links
             this.isSending = false
           })
         })
@@ -297,9 +317,6 @@ export default {
           this.newTag = null
         })
       })
-    },
-    deleteTag () {
-      console.log('delete in app form')
     },
     filterResults (tag) {
       if (tag === 'all') {

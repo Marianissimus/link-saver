@@ -42,7 +42,7 @@ export default {
       db.collection('users').doc(this.user).update(
         {'tags': firebase.firestore.FieldValue.arrayRemove(tag)}
       ).then(() => {
-        this.$emit('deleted')
+        this.$emit('deleted', tag)
       })
     }
   }
@@ -50,8 +50,26 @@ export default {
 </script>
 
 <style scoped>
+ul {
+  padding: 0;
+}
 li {
   list-style-type: none;
   color: teal;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .3em;
 }
+li:nth-of-type(odd){
+  background: #E0EAFC;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to left, #CFDEF3, #E0EAFC);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #CFDEF3, #E0EAFC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+li:nth-of-type(even){
+ background: #D3CCE3;  /* fallback for old browsers */
+ background: -webkit-linear-gradient(to right, #E9E4F0, #D3CCE3);  /* Chrome 10-25, Safari 5.1-6 */
+ background: linear-gradient(to right, #E9E4F0, #D3CCE3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
 </style>

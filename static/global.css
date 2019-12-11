@@ -54,17 +54,15 @@ nav a, nav span {
 }
 
 .bk-red {
-  background: #CB356B;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to bottom, #BD3F32, #CB356B);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to bottom, #BD3F32, #CB356B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #D62828;
 }
 
 .bk-green {
-  background-color: teal;
+  background-color: #187015;
 }
 
 .bk-orange {
-  background-color: #FB8C00;
+  background-color: #C46500;
 }
 
 .deco-font {
@@ -230,7 +228,7 @@ input, select, textarea {
   top: 50%;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 750px) {
   #resultsTable td:last-child{
     display: inline;
     padding: 0;
@@ -239,14 +237,18 @@ input, select, textarea {
 
 #resultsTable tr:nth-of-type(odd){
   background: #E0EAFC;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #CFDEF3, #E0EAFC);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #CFDEF3, #E0EAFC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: -webkit-linear-gradient(to left, #FFF, #E0EAFC);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #FFF, #E0EAFC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 #resultsTable tr:nth-of-type(even){
-  background: #D3CCE3;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #E9E4F0, #D3CCE3);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #E9E4F0, #D3CCE3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #f5f5f5;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to top, #f5f5f5, #FFF);
+  background: linear-gradient(to top, #f5f5f5, #FFF);
+}
+
+#resultsTable tr:hover td{
+  background-color: #EEE;
 }
 
 /* MODAL DEFAULTS */
