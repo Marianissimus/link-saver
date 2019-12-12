@@ -15,7 +15,7 @@
           placeholder="Your password" autocomplete="new-password"/>
     		</p>
         <p v-if="error">
-          <span style="color: red">{{ error }}</span>
+          <span style="color: white">{{ error }}</span>
         </p>
       </div>
       <div class="btnRow">
@@ -51,6 +51,8 @@ export default {
         mutations.setIsLoggedIn(true)
         localStorage.setItem('user', response.user.email)
         this.$router.replace('form')
+      }).catch(error => {
+        this.error = error.message
       })
     },
     reset () {

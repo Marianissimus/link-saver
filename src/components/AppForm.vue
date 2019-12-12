@@ -8,27 +8,27 @@
           />
         </fieldset>
       </div>
-      <div>
+      <div v-if="link.url">
         <fieldset id="notes">
           <label for="notes">Notes:</label>
           <input type="text" name="notes" v-model="userInput.notes" placeholder="Some personal notes, if any" style ="width: 100%;"/>
         </fieldset>
       </div>
-      <div id="tags">
-        <fieldset>
-          <label for="tag">Tag: &nbsp;</label>
+      <div v-if="link.url" id="tags">
+        <span>Tag:&nbsp;</span>
+        <fieldset v-if="tags.length">
           <select name="tag" id="tag" v-model="userInput.tag">
             <option value="" selected disabled>Choose</option>
             <option v-for="option in tags" v-bind:value="option" :key="option">
               {{ option }}
             </option>
           </select>
+          <span>&nbsp;or:&nbsp;</span>
         </fieldset>
         <fieldset>
-          <label for="newTag">or:</label>
           <input type="text" v-model="newTag">
           <button @click.prevent="addTag" class="smallbtn bk-green" :disabled="!newTag">Add</button>
-          <button class="bk-red smallbtn" style="width: 70px;" @click="showTagsModal = true"><i class="material-icons" style="font-size: 14px; margin-top: 5px">delete</i><br/>Delete Tags</button>
+          <button v-if="tags.length" class="smallbtn bk-red" id="deleteTagsbtn" @click="showTagsModal = true"><i class="material-icons">delete</i> &nbsp;Delete Tags</button>
         </fieldset>
       </div>
       <div id="preview" v-if="link.url">
@@ -70,14 +70,14 @@
         </button>
       </div>
     </form>
-    <div v-if="userResults" class="resultsContainer">
-      <table rules="none" style="width: 100%;">
+    <div v-if="userResults.length" class="resultsContainer">
+      <table  style="width: 100%;">
         <tr>
-          <td style="text-align: right">
+          <td v-if="tags.length" style="text-align: left;">
             <fieldset style="border: none;">
               <label for="tagFilter"><span style="color: #232323">Show: &nbsp;</span></label>
               <select name="tagFilter" id="tagFilter" @change="filterResults($event.target.value)">
-                <option selected value="all">All</option>
+                <option selected value="all">All tags</option>
                 <option v-for="option in tags" :key="option">
                   {{ option }}
                 </option>
@@ -85,12 +85,17 @@
               </select>
             </fieldset>
           </td>
+          <td></td>
+          <td style="text-align: right">
+            <button v-if="tags.length" class="smallbtn" id="deleteTagsbtn" @click="showTagsModal = true" style="color: #D62828; background-color: #F8F8F8"><i class="material-icons">delete</i> &nbsp;Delete Tags</button>
+            <button v-if="filteredResults.length" class="smallbtn" id="deleteTagsbtn" @click="saveCsv" style="color: #187015; background-color: #F8F8F8"><i class="material-icons">save</i>&nbsp;Save CSV</button>
+          </td>
         </tr>
       </table>
       <table id="resultsTable" style="border-collapse: collapse;">
         <tr v-if="!filteredResults.length">
           <td></td>
-          <td style="height: 100px; width: 100px"><p>No results</p></td>
+          <td style="height: 100px; width: 100px"><p>No links</p></td>
           <td></td>
         </tr>
         <tr v-for="item in filteredResults" :key="item.url" style="border: 1px solid #f5f5f5">
@@ -105,9 +110,9 @@
             <p style="text-align: right; font-size: 12px" v-if="item.notes">notes: {{ item.notes }}</p>
           </td>
           <td>
-            <button class="bk-green smallbtn"><a :href="item.url" target="_blanc"><i class="material-icons" style="font-size: 14px; margin-top: 5px;">open_in_new</i><br/>Open</a></button>
-            <button class="bk-orange smallbtn" @click="editItem(item)"><i class="material-icons" style="font-size: 14px; margin-top: 5px;">edit</i><br/>Edit</button>
-            <button class="bk-red smallbtn" @click="deleteItem(item)"><i class="material-icons" style="font-size: 14px; margin-top: 5px;">delete</i><br/>Delete</button>
+            <button class="smallbtn"><a :href="item.url" target="_blanc" style="color: #187015"><i class="material-icons">open_in_new</i><br/>Open</a></button>
+            <button class="smallbtn" @click="editItem(item)" style="color: #C46500"><i class="material-icons">edit</i><br/>Edit</button>
+            <button class="smallbtn" @click="deleteItem(item)"  style="color: #D62828"><i class="material-icons">delete</i><br/>Delete</button>
           </td>
         </tr>
       </table>
@@ -120,7 +125,6 @@
     </TagsModal>
 
     <div v-if="isSending">Please wait...</div>
-    <!-- <div v-if="!isSending && !userResults" style="color: red">Add some links</div> -->
   </div>
 </template>
 
@@ -150,10 +154,10 @@ export default {
         title: true,
         images: true
       },
-      tags: null,
+      tags: [],
       newTag: null,
       isValidUrl: false,
-      userResults: null,
+      userResults: [],
       isSending: false,
       showModal: false,
       itemToDelete: null,
@@ -290,10 +294,12 @@ export default {
           db.collection('users').doc(user).get().then((snapshot) => {
             this.userResults = snapshot.data().links
             this.filteredResults = snapshot.data().links
+            this.tags = snapshot.data().tags
             this.isSending = false
           })
         })
-      }).then(() => {
+      })
+      .then(() => {
         Object.assign(this.$data, this.$options.data.apply(this))
         }
       )
@@ -331,6 +337,61 @@ export default {
       this.link = this.getEmptyLink()
       this.userInput = this.getEmptyInput()
       this.isValidUrl = false
+    },
+    saveCsv () {
+      let csv = [];
+      // header row
+      csv.push(
+        [
+          'title',
+          'description',
+          'image',
+          'tag',
+          'notes',
+          'url'
+        ]
+      )
+
+      for (let i=0; i<this.filteredResults.length; i++) {
+        csv.push(
+          [
+            JSON.stringify(this.filteredResults[i].title),
+            JSON.stringify(this.filteredResults[i].description),
+            JSON.stringify(this.filteredResults[i].images),
+            JSON.stringify(this.filteredResults[i].tag),
+            JSON.stringify(this.filteredResults[i].notes),
+            JSON.stringify(this.filteredResults[i].url)
+          ]
+        )
+      }
+
+    // Download CSV file
+      this.downloadCSV(csv.join("\n"), 'linksaver');
+    },
+    downloadCSV(csv, filename) {
+        var csvFile;
+        var downloadLink;
+
+        // CSV file
+        csvFile = new Blob([csv], {type: "text/csv"});
+
+        // Download link
+        downloadLink = document.createElement("a");
+
+        // File name
+        downloadLink.download = filename;
+
+        // Create a link to the file
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+
+        // Hide download link
+        downloadLink.style.display = "none";
+
+        // Add the link to DOM
+        document.body.appendChild(downloadLink);
+
+        // Click download link
+        downloadLink.click();
     },
     removeDiacritics (str) {
       let map = {

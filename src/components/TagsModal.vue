@@ -14,7 +14,7 @@
               <ul>
                 <li v-for="tag in tags">
                   <span>{{ tag }}</span>
-                  <button class="bk-red smallbtn" @click="deleteItem(tag)"><i class="material-icons" style="font-size: 14px; margin-top: 5px;">delete</i><br/>Delete</button>
+                  <button class="smallbtn" @click="deleteItem(tag)"  style="color: #D62828"><i class="material-icons">delete</i><br/>Delete</button>
                 </li>
               </ul>
             </slot>
@@ -55,21 +55,12 @@ ul {
 }
 li {
   list-style-type: none;
-  color: teal;
+  color: black;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: .3em;
 }
-li:nth-of-type(odd){
-  background: #E0EAFC;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #CFDEF3, #E0EAFC);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #CFDEF3, #E0EAFC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-}
-li:nth-of-type(even){
- background: #D3CCE3;  /* fallback for old browsers */
- background: -webkit-linear-gradient(to right, #E9E4F0, #D3CCE3);  /* Chrome 10-25, Safari 5.1-6 */
- background: linear-gradient(to right, #E9E4F0, #D3CCE3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-}
+
 
 </style>
