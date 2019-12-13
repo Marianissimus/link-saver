@@ -2,7 +2,7 @@
   <div id="app">
     <header>
       <nav>
-        <span class="deco-font logoTitle">Little Link Saver</span>
+        <span class="deco-font logoTitle">Link Saver</span>
         <span v-if="user">for {{ user }}</span>
         <router-link to="login" v-if="!user && this.$route.path !=='/login' ">Log in</router-link>
         <router-link to="SignUp" v-if="!user &&  this.$route.path !=='/SignUp'">Sign in</router-link>

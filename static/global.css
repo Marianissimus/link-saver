@@ -22,12 +22,13 @@ nav {
   display: flex;
   flex-direction: row;
   align-items: baseline;
-  justify-content: space-around;
+  justify-content: space-between;
   border: 2px dashed white;
   border-radius: 10px;
   margin: 1em auto;
   color: white;
   width: 90vw;
+  padding: 5px;
 }
 
 nav a, nav span {
@@ -94,7 +95,9 @@ button {
 
 button:focus {outline:0;}
 
-button:hover { background-position: right center; cursor: pointer; }
+button:hover{
+  cursor: pointer;
+}
 
 .smallbtn {
   font-size: 12px;
@@ -115,14 +118,6 @@ button:hover { background-position: right center; cursor: pointer; }
 .material-icons {
   font-size: 12px;
 }
-
-#deleteTagsbtn {
-  width: auto;
-}
-
-/*.smallbtn  {
-  font-size: 16px;
-}*/
 
 input, select, textarea {
   border: none;
@@ -164,10 +159,9 @@ input, select, textarea {
 #tags {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: baseline;
   justify-content: flex-start;
 }
-
 
 /* preview card */
 .card {
@@ -214,6 +208,13 @@ input, select, textarea {
   margin-top: 1em;
 }
 
+#resultsOptions {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  background-color: white;
+}
+
 #resultsTable {
   width: 100%;
 }
@@ -224,11 +225,12 @@ input, select, textarea {
 }
 
 
-#resultsTable td:last-child{
+/*#resultsTable td:last-child{
   min-width: 200px;
   position: relative;
   top: 50%;
-}
+  border: 2px solid red;
+}*/
 
 @media only screen and (max-width: 750px) {
   #resultsTable td:last-child{
