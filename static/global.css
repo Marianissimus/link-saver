@@ -215,43 +215,101 @@ input, select, textarea {
   background-color: white;
 }
 
-#resultsTable {
+
+#results {
+  color: black;
+}
+
+#results ul {
+  list-style-type: none;
+  text-align: left;
+  padding: 0;
+}
+
+#results ul li {
+  display: flex;
+  flex-direction: row;
   width: 100%;
-}
-
-#resultsTable tr td {
-  color: #010101;
-  padding: .4em;
-}
-
-
-/*#resultsTable td:last-child{
-  min-width: 200px;
   position: relative;
-  top: 50%;
-  border: 2px solid red;
-}*/
+}
 
-@media only screen and (max-width: 750px) {
-  #resultsTable td:last-child{
-    display: inline;
-    padding: 0;
+#results ul li div {
+  padding: 10px;å
+}
+
+#resultsImage {
+  overflow: hidden;
+  flex: 200px 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#resultsImage img {
+  width: 200px;
+  height: auto;
+  object-fit: cover;
+  flex: 100% 1 1 ;
+}
+
+#resultsText {
+  padding: 0 10px;
+  flex: 1 1 auto;
+}
+
+#resultsButtons {
+  flex: 160px 0 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.visibleWhenSmall {
+  display: none;
+}
+
+@media only screen and (min-width: 700px) and (max-width: 900px)  {
+  #resultsButtons {
+      flex-basis: 50px;
+      flex-direction: column;
+    }
+  }
+
+@media only screen and (max-width: 800px) {
+  #resultsImage {
+    flex-basis: 100px;
+    position: relative;
+  }
+  #resultsImage img {
+    width: 100px;
+    height: 60px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  #resultsButtons {
+    display: none;
+  }
+  .visibleWhenSmall {
+    display: block;
   }
 }
 
-#resultsTable tr:nth-of-type(odd), .modal-body li:nth-of-type(odd){
+#results ul li:nth-of-type(odd), .modal-body li:nth-of-type(odd){
   background: #E0EAFC;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to left, #FFF, #E0EAFC);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to left, #FFF, #E0EAFC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
-#resultsTable tr:nth-of-type(even), .modal-body li:nth-of-type(even){
+#results ul li:nth-of-type(even), .modal-body li:nth-of-type(even){
   background: #f5f5f5;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to top, #f5f5f5, #FFF);
   background: linear-gradient(to top, #f5f5f5, #FFF);
 }
 
-#resultsTable tr:hover td{
+
+#results li:hover > * {
   background-color: #EEE;
 }
 

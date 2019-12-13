@@ -1,6 +1,6 @@
 <template>
   <div class="container main">
-    <form @submit.prevent class="input-form">
+    <form @submit.prevent class="input-form" ref="editor">
       <div>
         <fieldset>
           <label for="url">Url: &nbsp;</label>
@@ -91,30 +91,36 @@
           <button v-if="filteredResults.length" class="smallbtn" id="deleteTagsbtn" @click="saveCsv" style="color: #187015; background-color: #F8F8F8"><i class="material-icons">save</i>&nbsp;Save CSV</button>
         </div>
       </div>
-      <table id="resultsTable" style="border-collapse: collapse;">
-        <tr v-if="!filteredResults.length">
-          <td></td>
-          <td style="height: 100px; width: 100px"><p>No links</p></td>
-          <td></td>
-        </tr>
-        <tr v-for="item in filteredResults" :key="item.url" style="border: 1px solid #f5f5f5">
-          <td v-if="item.images" style="background-color: white"><img :src="item.images[0]" style="height: 100px; width: auto; object-fit: cover"></td>
-          <td v-else style="background-color: white"><span>No image</span></td>
-          <td>
+      <div id="results">
+       <ul v-if="filteredResults.length">
+        <li  v-for="item in filteredResults" :key="item.url">
+         <div id="resultsImage" v-if="item.images"><img :src="item.images[0]">
+         </div>
+         <div v-else><span>No image</span></div>
+         <div id="resultsText">
             <p v-if="item.tag" style="text-align: right"><span style="font-size: 12px">in: {{ item.tag }}</span></p>
             <p v-if="item.title"><h4 style="text-align: left">{{ item.title }}</h4></p>
             <br/>
             <p style="text-align: left; font-size: 14px" v-if="item.description">{{ item.description }}</p>
             <br />
             <p style="text-align: right; font-size: 12px" v-if="item.notes">notes: {{ item.notes }}</p>
-          </td>
-          <td>
+            <p class="visibleWhenSmall" style="text-align: right;">
+              <button class="smallbtn"><a :href="item.url" target="_blanc" style="color: #187015"><i class="material-icons">open_in_new</i><br/>Open</a></button>
+              <button class="smallbtn" @click="editItem(item)" style="color: #C46500"><i class="material-icons">edit</i><br/>Edit</button>
+              <button class="smallbtn" @click="deleteItem(item)"  style="color: #D62828"><i class="material-icons">delete</i><br/>Delete</button>
+            </p>
+          </div>
+          <div id="resultsButtons">
             <button class="smallbtn"><a :href="item.url" target="_blanc" style="color: #187015"><i class="material-icons">open_in_new</i><br/>Open</a></button>
             <button class="smallbtn" @click="editItem(item)" style="color: #C46500"><i class="material-icons">edit</i><br/>Edit</button>
             <button class="smallbtn" @click="deleteItem(item)"  style="color: #D62828"><i class="material-icons">delete</i><br/>Delete</button>
-          </td>
-        </tr>
-      </table>
+          </div>
+        </li>
+       </ul>
+         <div v-else>
+          No links in here
+         </div>
+      </div>
     </div>
     <DeleteModal v-if="showModal" @close="showModal = false; itemToDelete = null" @confirmDelete="removeItem">
       <template v-slot:header>Are you sure?</template>
@@ -210,7 +216,10 @@ export default {
         this.getUserData()
       })
     },
-    editItem (item) {
+    async editItem (item) {
+      if (this.isEditMode) {
+        await this.reset()
+      }
       this.itemToRemove = item
       this.isEditMode = true
       this.userInput = {
@@ -218,6 +227,7 @@ export default {
         notes: item.notes
       }
       this.link.url = item.url
+      this.$refs['editor'].scrollIntoView()
     },
     deleteTag (tag) {
       let tempResults = this.userResults
