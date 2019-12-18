@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import * as firebase from 'firebase'
+import firebase from 'firebase/app'
 import { store, mutations } from "./store"
 
 export default {

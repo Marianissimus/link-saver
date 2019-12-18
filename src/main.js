@@ -4,7 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router/index.js'
 import { firestorePlugin } from 'vuefire'
-import firebase from 'firebase'
+import * as firebase from 'firebase/app'
+import 'firebase/firestore'
+import 'firebase/auth'
 
 Vue.use(firestorePlugin)
 

@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import * as firebase from 'firebase'
 import Form from '../components/AppForm'
 import Login from '../components/Login'
 import SignUp from '../components/SignUp'

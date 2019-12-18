@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import * as firebase from 'firebase'
+import firebase from 'firebase/app'
 import Vue from 'vue'
 import { store, mutations } from "../store"
 

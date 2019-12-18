@@ -136,7 +136,7 @@
 <script>
 import Vue from 'vue'
 import LinkPrevue from 'link-prevue'
-import * as firebase from 'firebase'
+import firebase from 'firebase/app'
 import { db } from '@/main'
 import { store, mutations } from "../store"
 import DeleteModal from './DeleteModal'
