@@ -4,7 +4,7 @@
       <div>
         <fieldset>
           <label for="url">Url: &nbsp;</label>
-          <input type="text" name="url" id="url" v-model.lazy="link.url" contenteditable="true" :disabled="isValidUrl" placeholder="Paste your link here" style="width: 100%"
+          <input type="text" name="url" id="url" v-model="link.url" contenteditable="true" :disabled="isValidUrl" placeholder="Paste your link here" style="width: 100%"
           />
         </fieldset>
       </div>

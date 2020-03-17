@@ -15,6 +15,9 @@
           placeholder="Your password" autocomplete="current-password"
           />
     		</p>
+        <p v-if="message">
+          <span style="color: white">{{ message }}</span>
+        </p>
       </div>
       <div class="btnRow">
         <button @click.prevent="reset" class="submitBtn bk-red">Reset</button>
@@ -35,21 +38,30 @@ export default {
       password: ''
     }
   },
+  computed: {
+    message () {
+      return store.message
+    }
+  },
   methods: {
     signUp () {
       firebase.auth().createUserWithEmailAndPassword(this.email, this.password).catch(function(error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        if (errorMessage) console.log(errorMessage)
-
-      }).then (()=> {
-        mutations.setMessage('You can now log in')
-        this.$router.replace('login')
+        if (error) { 
+          let msg =  error.message
+          mutations.setMessage(msg)
+          return false
+        }
+      }).then(response => {
+        if(response) {
+          mutations.setMessage('You can now log in')
+          this.$router.replace('login')
+        }
       })
     },
     reset () {
       this.email = ''
       this.password = ''
+      mutations.setMessage(null)
     }
   }
 }

@@ -45,7 +45,8 @@ export default {
         })
           .then (()=> {
           this.$router.replace('login')
-          if (user) mutations.setUser(null)
+          mutations.setUser(null)
+          mutations.setMessage(null)
         })
       }
     }
