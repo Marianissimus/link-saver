@@ -26,6 +26,7 @@
 
 <script>
 import firebase from 'firebase/app'
+import { store, mutations } from "../store"
 
 export default {
   data () {
@@ -42,6 +43,7 @@ export default {
         if (errorMessage) console.log(errorMessage)
 
       }).then (()=> {
+        mutations.setMessage('You can now log in')
         this.$router.replace('login')
       })
     },

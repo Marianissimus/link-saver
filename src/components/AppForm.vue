@@ -250,6 +250,7 @@ export default {
       this.getUserData()
     },
     getUserData () {
+      
         let user = this.user
 
         // this is for page reload, mostly for testing purposes
@@ -375,7 +376,7 @@ export default {
       }
 
     // Download CSV file
-      this.downloadCSV(csv.join("\n"), 'linksaver');
+      this.downloadCSV(csv.join("\n"), 'linksaver.csv');
     },
     downloadCSV(csv, filename) {
         var csvFile;
