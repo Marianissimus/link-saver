@@ -44,9 +44,9 @@ export default {
           if (errorMessage) console.log(`Error code: ${errorCode} with message: ${errorMessage}`)
         })
           .then (()=> {
-          this.$router.replace('login')
           mutations.setUser(null)
           mutations.setMessage(null)
+          this.$router.replace('login')
         })
       }
     }

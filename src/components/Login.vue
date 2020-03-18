@@ -22,7 +22,7 @@
       <div class="btnRow">
         <button type="button" @click="reset" class="submitBtn bk-red">Reset</button>
         <button type="submit" class="submitBtn bk-green">Log in</button>
-        <button type="button" class="submitBtn bk-green" @click="demoLogin">Demo</button>
+        <button type="button" class="submitBtn bk-cyan" @click="demoLogin">Demo</button>
       </div>
   	</form>
   </div>
