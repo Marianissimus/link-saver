@@ -45,7 +45,7 @@ export default {
   computed: {
    user () {
     return store.user
-   }, 
+   },
    message () {
     return store.message
    }

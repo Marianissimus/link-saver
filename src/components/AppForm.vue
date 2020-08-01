@@ -34,14 +34,20 @@
         </div>
       </div>
       <div id="preview" v-if="link.url">
-        <link-prevue :url="link.url" ref="prevue" @hook:updated="update">ƒ
+        <link-prevue :url="link.url" ref="prevue" @hook:updated="update" style="text-align: center;">
           <template slot-scope="props">
             <div class="card">
-              <img class="card-img-top" v-if="show.images" :src="props.img" :alt="props.title">
+              <img class="card-img-top" v-if="show.image" :src="props.img" :alt="props.title">
               <div class="card-block">
                 <h4 class="card-title" v-if="show.title" v-text="removeDiacritics(props.title)"></h4>
                 <p class="card-text" v-if="show.description" v-text="removeDiacritics(props.description)"></p>
               </div>
+            </div>
+          </template>
+          <template slot="loading">
+            <div class="loader">
+              <img :src="require('@/assets/loader.gif')" style="margin: 0 auto;"/>
+              <p class="card-text" style="text-align: center;">Loading...</p>
             </div>
           </template>
         </link-prevue>
@@ -58,7 +64,7 @@
         </fieldset>
         <fieldset>
           <label for="showImage">Image</label>
-          <input type="checkbox" name="showImage" id="showImage" v-model="show.images">
+          <input type="checkbox" name="showImage" id="showImage" v-model="show.image">
         </fieldset>
       </div>
       <div v-if="isValidUrl" class="btnRow">
@@ -94,7 +100,7 @@
       <div id="results">
        <ul v-if="filteredResults.length">
         <li  v-for="item in filteredResults" :key="item.url">
-         <div id="resultsImage" v-if="item.images"><img :src="item.images[0]">
+         <div id="resultsImage" v-if="item.image"><img :src="item.image">
          </div>
          <div v-else><span>No image</span></div>
          <div id="resultsText">
@@ -144,7 +150,9 @@ import TagsModal from './TagsModal'
 
 export default {
   components: {
-    LinkPrevue, DeleteModal, TagsModal
+    'link-prevue':LinkPrevue,
+    DeleteModal,
+    TagsModal
   },
   mounted() {
     this.getUserData()
@@ -157,7 +165,7 @@ export default {
       show: {
         description: true,
         title: true,
-        images: true
+        image: true
       },
       tags: [],
       newTag: null,
@@ -186,7 +194,7 @@ export default {
         url: '',
         title: '',
         description: '',
-        images: '',
+        image: '',
       }
     },
     getEmptyInput () {
@@ -250,7 +258,6 @@ export default {
       this.getUserData()
     },
     getUserData () {
-      
         let user = this.user
 
         // this is for page reload, mostly for testing purposes
@@ -367,7 +374,7 @@ export default {
           [
             JSON.stringify(this.filteredResults[i].title),
             JSON.stringify(this.filteredResults[i].description),
-            JSON.stringify(this.filteredResults[i].images),
+            JSON.stringify(this.filteredResults[i].image),
             JSON.stringify(this.filteredResults[i].tag),
             JSON.stringify(this.filteredResults[i].notes),
             JSON.stringify(this.filteredResults[i].url)
@@ -404,6 +411,7 @@ export default {
         downloadLink.click();
     },
     removeDiacritics (str) {
+      if (!str) return false
       let map = {
         'a': 'ă|â|ă',
         'i': 'î',
