@@ -1,3 +1,8 @@
+# DISCONTINUED :
+
+* Update: Because of the CORS problem faced by the preview dependency (prevue app), I am deleting the connected firebase project (db and hosting). I have no current intention of getting back to this project.*
+
+
 # link-saver
 
 > A Vue.js project
